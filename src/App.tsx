@@ -6,12 +6,9 @@ import { SideMenuNavigator } from './presentation/routes/SideMenuNavigator';
 import { PaperProvider } from 'react-native-paper';
 import KeepAwake from 'react-native-keep-awake';
 import { AppProvider } from './context/VelocidadContext';
-import { UsageMonitor } from './helpers/UsageMonitor';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 export const App = () => {
-  UsageMonitor();
-
   useEffect(() => {
     KeepAwake.activate();
     SystemNavigationBar.immersive(); 

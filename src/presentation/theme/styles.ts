@@ -140,55 +140,92 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
   },
 
-  infoBox: {
-    position: 'absolute',
-    top: '10%', // Ajusta la posición según sea necesario
-    left: '36.5%',
-    backgroundColor: '#FB7B0F',
-    padding: 10,
-    borderRadius: 8,
-    zIndex: 1,
-    alignItems: 'center',
-    maxWidth: 300,
+infoBox: {
+  position: 'absolute',
+  top: '8%',
+  left: '50%',
+  transform: [{translateX: -150}], // Centra perfectamente la caja (asumiendo maxWidth: 300)
+  backgroundColor: '#1F2937', // Fondo oscuro (gris muy oscuro)
+  padding: 16,
+  paddingHorizontal: 20,
+  borderRadius: 12,
+  zIndex: 1000,
+  alignItems: 'center',
+  maxWidth: 300,
+  minWidth: 280,
+  // Sombra profesional
+  shadowColor: '#000000',
+  shadowOffset: {
+    width: 0,
+    height: 4,
   },
-  infoText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
+  shadowOpacity: 0.25, // Sombra más intensa para fondo oscuro
+  shadowRadius: 12,
+  elevation: 8, // Para Android
+  // Borde sutil
+  borderWidth: 1,
+  borderColor: '#374151', // Borde gris oscuro
+},
+
+infoText: {
+  fontSize: 18,
+  fontWeight: '700', // Más bold
+  color: '#FFFFFF', // Texto blanco
+  textAlign: 'center',
+  marginBottom: 4,
+  letterSpacing: 0.5,
+},
+
+infoDir: {
+  fontSize: 16,
+  fontWeight: '500',
+  color: '#D1D5DB', // Gris claro para jerarquía visual
+  textAlign: 'center',
+  lineHeight: 18,
+  paddingHorizontal: 8,
+},
+
+returnButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#1F2937', // Fondo oscuro
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 5,
+  position: 'absolute',
+  bottom: 20,
+  left: 20,
+  zIndex: 1,
+  // Agregar sombra para consistencia
+  shadowColor: '#000000',
+  shadowOffset: {
+    width: 0,
+    height: 2,
   },
-  infoDir: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  returnButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FB7B0F',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    zIndex: 1,
-  },
-  iconBack: {
-    marginRight: 2,
-  },
-  returnButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  shadowOpacity: 0.25,
+  shadowRadius: 8,
+  elevation: 6,
+  borderWidth: 1,
+  borderColor: '#374151',
+},
+
+iconBack: {
+  marginRight: 2,
+  color: '#FFFFFF', // Icono blanco
+},
+
+returnButtonText: {
+  color: '#FFFFFF', // Texto blanco
+  fontSize: 20,
+  fontWeight: 'bold',
+},
 
   containerControlText: {
     alignItems: 'center',
     justifyContent: 'center',
     color: '#000',
   },
+
   version: {
     fontSize: 11,
     fontWeight: 'bold',
@@ -202,6 +239,7 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 2,
     color: '#343a40',
   },
+
   copyright: {
     fontSize: 11,
     fontWeight: 'bold',
@@ -222,6 +260,7 @@ export const globalStyles = StyleSheet.create({
     right: 20,
     alignItems: 'center',
   },
+
   zoomButton: {
     width: 40,
     height: 40,
@@ -236,6 +275,7 @@ export const globalStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+
   zoomText: {
     fontSize: 25,
     fontWeight: 'bold',

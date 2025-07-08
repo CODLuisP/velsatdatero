@@ -30,11 +30,7 @@ type CarData = {
     const distance = EARTH_RADIUS_KM * c;
   
     // let relativeSpeed = Math.abs(car1.speed - car2.speed);
-    let relativeSpeed = 25;
-
-    // if (relativeSpeed < 10) {
-    //   relativeSpeed = 11;
-    // }
+    let relativeSpeed = 12;
 
     if (distance < 0.1) {
       return 1;

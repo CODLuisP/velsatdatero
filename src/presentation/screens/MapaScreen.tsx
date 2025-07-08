@@ -1,13 +1,10 @@
 import {useRoute, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useRef, useMemo} from 'react';
-import {Button, Text, View, StyleSheet, Pressable, Image} from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import {Text, View, Pressable, Image} from 'react-native';
+import {WebView} from 'react-native-webview';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {globalStyles} from '../theme/styles';
 import {IonIcon} from '../components/shared/IonIcon';
-
-const initialZoomRegion = {latitudeDelta: 0.0922, longitudeDelta: 0.0421};
-const zoomedInLevel = 18; // Nivel de zoom aumentado
 
 export const MapaScreen = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -45,7 +42,7 @@ export const MapaScreen = () => {
     [route.params],
   );
 
-  const mapRef = useRef<MapView | null>(null);
+  const webViewRef = useRef<WebView>(null);
 
   const handleReturnToRutaBus = () => {
     navigation.navigate('RUTA BUS', {
@@ -58,42 +55,29 @@ export const MapaScreen = () => {
     });
   };
 
-  const zoomIn = () => {
-    if (mapRef.current) {
-      mapRef.current.getCamera().then((camera) => {
-        const currentZoom = camera.zoom ?? 15; // Nivel de zoom predeterminado si 'zoom' es undefined
-        mapRef.current?.animateCamera({
-          ...camera,
-          zoom: currentZoom + 1, // Incrementa el nivel de zoom
-        });
-      });
-    }
-  };
-  
-  const zoomOut = () => {
-    if (mapRef.current) {
-      mapRef.current.getCamera().then((camera) => {
-        const currentZoom = camera.zoom ?? 15; // Nivel de zoom predeterminado si 'zoom' es undefined
-        mapRef.current?.animateCamera({
-          ...camera,
-          zoom: currentZoom - 1, // Disminuye el nivel de zoom
-        });
-      });
-    }
+   const onWebViewLoad = () => {
+    // Inicializar el mapa cuando se carga
+    webViewRef.current?.postMessage(
+      JSON.stringify({
+        type: 'init',
+        lat: latitud,
+        lng: longitud,
+      })
+    );
   };
 
-  useEffect(() => {
-    if (mapRef.current) {
-      const latitudeOffset = -0.0001;
-      mapRef.current.animateCamera(
-        {
-          center: {latitude: latitud - latitudeOffset, longitude: longitud},
-          zoom: zoomedInLevel,
-        },
-        {duration: 1000},
+    useEffect(() => {
+    if (webViewRef.current) {
+      webViewRef.current.postMessage(
+        JSON.stringify({
+          type: 'update',
+          lat: latitud,
+          lng: longitud,
+        })
       );
     }
   }, [latitud, longitud]);
+
 
   return (
     <View style={{flex: 1}}>
@@ -115,32 +99,16 @@ export const MapaScreen = () => {
         <Text style={globalStyles.infoDir}>{direccion}</Text>
       </View>
 
-      <MapView
-        ref={mapRef}
+      <WebView
+        ref={webViewRef}
+        source={{uri: 'file:///android_asset/map.html'}}
         style={{flex: 1}}
-        initialRegion={{
-          latitude: latitud,
-          longitude: longitud,
-          ...initialZoomRegion,
-        }}>
-        <Marker coordinate={{latitude: latitud, longitude: longitud}} style={{width:50, height:50}}>
-          <Image
-            source={require('../files/IMG/bus.png')}
-            style={{width: '90%', height: '90%'}} // Ajusta el tamaño deseado aquí
-            resizeMode="contain"
-          />
-        </Marker>
-      </MapView>
-
-      {/* Botones de zoom */}
-      <View style={globalStyles.zoomButtons}>
-        <Pressable style={globalStyles.zoomButton} onPress={zoomIn}>
-          <Text style={globalStyles.zoomText}>+</Text>
-        </Pressable>
-        <Pressable style={globalStyles.zoomButton} onPress={zoomOut}>
-          <Text style={globalStyles.zoomText}>-</Text>
-        </Pressable>
-      </View>
+        onLoad={onWebViewLoad}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        mixedContentMode="compatibility"
+      />
     </View>
   );
 };
