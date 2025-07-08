@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSM Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { height: 100vh; width: 100vw; }
+        
+        /* Ocultar controles de zoom por defecto */
+        .leaflet-control-zoom {
+            display: none !important;
+        }
+        
+        /* Ocultar íconos de POI (restaurantes, tiendas, etc.) */
+        .leaflet-marker-icon,
+        .leaflet-div-icon {
+            display: none !important;
+        }
+        
+        /* Mostrar solo nuestro marcador personalizado */
+        .bus-marker {
+            display: block !important;
+        }
+        
+        /* Controles de zoom personalizados con tema oscuro */
+        .custom-zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .zoom-btn {
+            width: 50px;
+            height: 50px;
+            background: #1F2937; /* Mismo fondo oscuro */
+            border: 1px solid #374151; /* Mismo borde gris oscuro */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFFFFF; /* Texto blanco */
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25); /* Sombra más intensa */
+            transition: all 0.2s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: #374151; /* Hover más claro */
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .zoom-btn:active {
+            transform: scale(0.95);
+            background: #111827; /* Más oscuro al presionar */
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <!-- Controles de zoom personalizados -->
+    <div class="custom-zoom-controls">
+        <div class="zoom-btn" onclick="zoomIn()">+</div>
+        <div class="zoom-btn" onclick="zoomOut()">−</div>
+    </div>
+    
+    <script>
+        let map;
+        let busMarker;
+        
+        function initMap(lat, lng) {
+            // Crear mapa SIN controles de zoom por defecto
+            map = L.map('map', {
+                zoomControl: false // Esto desactiva los controles por defecto
+            }).setView([lat, lng], 18);
+            
+            // Usar tiles básicos SIN puntos de interés
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+            }).addTo(map);
+            
+            // Crear icono personalizado SIN FONDO y MÁS GRANDE
+            const busIcon = L.divIcon({
+                html: '<div style="font-size: 40px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(255,255,255,0.8); transform: rotate(0deg);">🚌</div>',
+                className: 'bus-marker',
+                iconSize: [60, 60], // Más grande
+                iconAnchor: [30, 30] // Centrado
+            });
+            
+            busMarker = L.marker([lat, lng], {icon: busIcon}).addTo(map);
+        }
+        
+        function updateLocation(lat, lng) {
+            if (busMarker) {
+                busMarker.setLatLng([lat, lng]);
+                map.setView([lat, lng]);
+            }
+        }
+        
+        function zoomIn() {
+            map.zoomIn();
+        }
+        
+        function zoomOut() {
+            map.zoomOut();
+        }
+        
+        // Comunicación con React Native
+        document.addEventListener('message', function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'init') {
+                initMap(data.lat, data.lng);
+            } else if (data.type === 'update') {
+                updateLocation(data.lat, data.lng);
+            } else if (data.type === 'zoomIn') {
+                zoomIn();
+            } else if (data.type === 'zoomOut') {
+                zoomOut();
+            }
+        });
+    </script>
+</body>
+</html>
