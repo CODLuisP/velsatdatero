@@ -30,10 +30,10 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 3,
   },
 
-    titleModoContainer: {
+  titleModoContainer: {
     flexDirection: 'row',
-    alignItems: 'center',      // Centrado vertical
-    justifyContent: 'center',  // Centrado horizontal
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 10,
     backgroundColor: '#2196f3',
     marginVertical: 10,
@@ -46,15 +46,14 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-    titleModo: {
+  titleModo: {
     color: '#ffffff',
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     textAlign: 'center',
     fontSize: 20,
     justifyContent: 'space-between',
-    alignItems:'center',
+    alignItems: 'center',
   },
-
 
   title2Ruta: {
     backgroundColor: '#0d47a1',
@@ -74,6 +73,7 @@ export const globalStyles = StyleSheet.create({
     borderColor: '#e9ecef',
     paddingLeft: 15,
   },
+
   containerTimes: {
     backgroundColor: '#93c5fd',
     marginVertical: 1.5,
@@ -95,6 +95,7 @@ export const globalStyles = StyleSheet.create({
     color: '#ffffff',
     paddingVertical: 5,
   },
+
   valueTimesDiff: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -140,85 +141,256 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
   },
 
-infoBox: {
-  position: 'absolute',
-  top: '8%',
-  left: '50%',
-  transform: [{translateX: -150}], // Centra perfectamente la caja (asumiendo maxWidth: 300)
-  backgroundColor: '#1F2937', // Fondo oscuro (gris muy oscuro)
-  padding: 16,
-  paddingHorizontal: 20,
-  borderRadius: 12,
-  zIndex: 1000,
-  alignItems: 'center',
-  maxWidth: 300,
-  minWidth: 280,
-  // Sombra profesional
-  shadowColor: '#000000',
-  shadowOffset: {
-    width: 0,
-    height: 4,
+  // ===== ESTILOS ACTUALIZADOS PARA EL MAPA =====
+  
+  // Caja de información - arriba a la derecha
+  infoBox: {
+    position: 'absolute',
+    top: 20,
+    right: 15,
+    backgroundColor: 'rgba(31, 41, 55, 0.95)', // Fondo oscuro semi-transparente
+    padding: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    zIndex: 1000,
+    alignItems: 'center',
+    maxWidth: 200,
+    minWidth: 140,
+    // Sombra elegante
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+    // Borde sutil
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  shadowOpacity: 0.25, // Sombra más intensa para fondo oscuro
-  shadowRadius: 12,
-  elevation: 8, // Para Android
-  // Borde sutil
-  borderWidth: 1,
-  borderColor: '#374151', // Borde gris oscuro
-},
 
-infoText: {
-  fontSize: 18,
-  fontWeight: '700', // Más bold
-  color: '#FFFFFF', // Texto blanco
-  textAlign: 'center',
-  marginBottom: 4,
-  letterSpacing: 0.5,
-},
-
-infoDir: {
-  fontSize: 16,
-  fontWeight: '500',
-  color: '#D1D5DB', // Gris claro para jerarquía visual
-  textAlign: 'center',
-  lineHeight: 18,
-  paddingHorizontal: 8,
-},
-
-returnButton: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: '#1F2937', // Fondo oscuro
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 5,
-  position: 'absolute',
-  bottom: 20,
-  left: 20,
-  zIndex: 1,
-  // Agregar sombra para consistencia
-  shadowColor: '#000000',
-  shadowOffset: {
-    width: 0,
-    height: 2,
+  // Versión para modal con menos margen superior
+  infoBoxModal: {
+    top: 10,
   },
-  shadowOpacity: 0.25,
-  shadowRadius: 8,
-  elevation: 6,
-  borderWidth: 1,
-  borderColor: '#374151',
-},
 
-iconBack: {
-  marginRight: 2,
-  color: '#FFFFFF', // Icono blanco
-},
+  infoText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
 
-returnButtonText: {
-  color: '#FFFFFF', // Texto blanco
-  fontSize: 20,
-  fontWeight: 'bold',
-},
+  infoDir: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#D1D5DB',
+    textAlign: 'center',
+    lineHeight: 16,
+    paddingHorizontal: 4,
+  },
+
+  // Contenedor principal del mapa
+  mapContainer: {
+    flex: 1,
+  },
+
+  // WebView del mapa
+  webView: {
+    flex: 1,
+  },
+
+  // ===== ESTILOS PARA EL MODAL =====
+  
+  // Overlay del modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  // Contenedor del modal
+  modalContainer: {
+    backgroundColor: 'white',
+    width: '95%',
+    height: '85%',
+    borderRadius: 15,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  // Header del modal
+  modalHeader: {
+    backgroundColor: '#113EB9',
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  modalTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+
+  modalHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  modalTimer: {
+    color: 'white',
+    marginRight: 10,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+
+  modalCloseButton: {
+    padding: 4,
+    borderRadius: 4,
+  },
+
+  modalContent: {
+    flex: 1,
+  },
+
+  // ===== ESTILOS PARA ESTADOS VACÍOS Y ADVERTENCIAS =====
+  
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+  },
+
+  emptyStateCard: {
+    backgroundColor: '#fff',
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    height: '100%',
+  },
+
+  emptyStateIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#fff3e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212529',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+
+  emptyStateSubtitle: {
+    fontSize: 14,
+    color: '#6c757d',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+
+  warningContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff3cd',
+  },
+
+  warningContent: {
+    backgroundColor: '#fff3cd',
+    alignItems: 'center',
+    padding: 20,
+  },
+
+  warningIcon: {
+    backgroundColor: '#ffeeba',
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 50,
+  },
+
+  warningText: {
+    color: '#856404',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+
+  vehicleListContainer: {
+    flexGrow: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+
+  // ===== ESTILOS EXISTENTES (sin cambios) =====
+
+  returnButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1F2937',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    zIndex: 1,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: '#374151',
+  },
+
+  iconBack: {
+    marginRight: 2,
+    color: '#FFFFFF',
+  },
+
+  returnButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 
   containerControlText: {
     alignItems: 'center',

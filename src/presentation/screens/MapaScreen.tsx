@@ -1,15 +1,49 @@
 import {useRoute, useNavigation} from '@react-navigation/native';
-import React, {useEffect, useRef, useMemo} from 'react';
-import {Text, View, Pressable, Image} from 'react-native';
+import React, {useEffect, useRef, useMemo, useCallback} from 'react';
+import {Text, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {globalStyles} from '../theme/styles';
-import {IonIcon} from '../components/shared/IonIcon';
 
-export const MapaScreen = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const route = useRoute();
+// Tipos para el modal
+interface ModalNavigation {
+  goBack: () => void;
+}
 
+interface ModalRoute {
+  params: {
+    deviceID: string;
+    latitud: number;
+    longitud: number;
+    direccion: string;
+    codigo: string;
+    fechaini: number;
+    codruta: string;
+    placa: string;
+    timeData?: {coddetacontrol: string; tiempogps: number}[];
+    timesControl?: {
+      codigo: string;
+      coddetallecontrol: string;
+      timecontrol: number;
+    }[];
+  };
+}
+
+interface MapaScreenProps {
+  route?: ModalRoute;
+  navigation?: ModalNavigation | DrawerNavigationProp<any>;
+}
+
+export const MapaScreen: React.FC<MapaScreenProps> = (props) => {
+  // Hooks de navegación como fallback
+  const hookNavigation = useNavigation<DrawerNavigationProp<any>>();
+  const hookRoute = useRoute();
+  
+  // Usar props si están disponibles, sino usar hooks
+  const navigation = props?.navigation || hookNavigation;
+  const route = props?.route || hookRoute;
+
+  // Extraer parámetros de manera optimizada
   const {
     deviceID,
     latitud,
@@ -19,95 +53,100 @@ export const MapaScreen = () => {
     fechaini,
     codruta,
     placa,
-    timeData,
-    timesControl,
-  } = useMemo(
-    () =>
-      route.params as {
-        deviceID: string;
-        latitud: number;
-        longitud: number;
-        direccion: string;
-        codigo: string;
-        fechaini: number;
-        codruta: string;
-        placa: string;
-        timeData: {coddetacontrol: string; tiempogps: number}[];
-        timesControl: {
-          codigo: string;
-          coddetallecontrol: string;
-          timecontrol: number;
-        }[];
-      },
-    [route.params],
-  );
+    timeData = [],
+    timesControl = [],
+  } = useMemo(() => {
+    const params = route.params as ModalRoute['params'];
+    return {
+      deviceID: params?.deviceID || '',
+      latitud: params?.latitud || 0,
+      longitud: params?.longitud || 0,
+      direccion: params?.direccion || '',
+      codigo: params?.codigo || '',
+      fechaini: params?.fechaini || 0,
+      codruta: params?.codruta || '',
+      placa: params?.placa || '',
+      timeData: params?.timeData || [],
+      timesControl: params?.timesControl || [],
+    };
+  }, [route.params]);
 
   const webViewRef = useRef<WebView>(null);
 
-  const handleReturnToRutaBus = () => {
-    navigation.navigate('RUTA BUS', {
-      codigo,
-      fechaini,
-      codruta,
-      placa,
-      timeData,
-      timesControl,
+  // Detectar si es modal
+  const isModal = Boolean(props?.navigation);
+
+  // Inicializar mapa optimizado
+  const initializeMap = useCallback(() => {
+    if (!webViewRef.current || !latitud || !longitud) return;
+    
+    const message = JSON.stringify({
+      type: 'init',
+      lat: latitud,
+      lng: longitud,
     });
-  };
-
-   const onWebViewLoad = () => {
-    // Inicializar el mapa cuando se carga
-    webViewRef.current?.postMessage(
-      JSON.stringify({
-        type: 'init',
-        lat: latitud,
-        lng: longitud,
-      })
-    );
-  };
-
-    useEffect(() => {
-    if (webViewRef.current) {
-      webViewRef.current.postMessage(
-        JSON.stringify({
-          type: 'update',
-          lat: latitud,
-          lng: longitud,
-        })
-      );
-    }
+    
+    webViewRef.current.postMessage(message);
   }, [latitud, longitud]);
 
+  // Actualizar posición del mapa
+  const updateMapPosition = useCallback(() => {
+    if (!webViewRef.current || !latitud || !longitud) return;
+    
+    const message = JSON.stringify({
+      type: 'update',
+      lat: latitud,
+      lng: longitud,
+    });
+    
+    webViewRef.current.postMessage(message);
+  }, [latitud, longitud]);
+
+  // Effect para actualizar posición cuando cambien las coordenadas
+  useEffect(() => {
+    updateMapPosition();
+  }, [updateMapPosition]);
+
+  // Manejar carga del WebView
+  const onWebViewLoad = useCallback(() => {
+    initializeMap();
+  }, [initializeMap]);
+
+  // Manejar errores del WebView
+  const onWebViewError = useCallback((error: any) => {
+    console.error('Error en WebView:', error);
+  }, []);
 
   return (
-    <View style={{flex: 1}}>
-      <Pressable
-        style={globalStyles.returnButton}
-        onPress={handleReturnToRutaBus}>
-        <IonIcon
-          name="arrow-back-circle-outline"
-          size={24}
-          color="#FFF"
-          style={globalStyles.iconBack}
-        />
-        <Text style={globalStyles.returnButtonText}>Volver</Text>
-      </Pressable>
-
-      {/* Caja flotante que simula el Callout siempre visible */}
-      <View style={globalStyles.infoBox}>
-        <Text style={globalStyles.infoText}>{deviceID.toUpperCase()}</Text>
-        <Text style={globalStyles.infoDir}>{direccion}</Text>
+    <View style={globalStyles.mapContainer}>
+      {/* Información del vehículo */}
+      <View style={[
+        globalStyles.infoBox,
+        isModal && globalStyles.infoBoxModal
+      ]}>
+        <Text style={globalStyles.infoText}>
+          {deviceID.toUpperCase()}
+        </Text>
+        <Text style={globalStyles.infoDir}>
+          {direccion}
+        </Text>
       </View>
 
+      {/* WebView del mapa */}
       <WebView
         ref={webViewRef}
         source={{uri: 'file:///android_asset/map.html'}}
-        style={{flex: 1}}
+        style={globalStyles.webView}
         onLoad={onWebViewLoad}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        startInLoadingState={true}
+        onError={onWebViewError}
+        javaScriptEnabled
+        domStorageEnabled
+        startInLoadingState
         mixedContentMode="compatibility"
+        allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
