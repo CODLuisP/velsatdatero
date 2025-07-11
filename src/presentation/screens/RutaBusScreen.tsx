@@ -388,74 +388,76 @@ export const RutaBusScreen = () => {
       </View>
 
       {/* Modal del Mapa */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              width: width * 0.95,
-              height: height * 0.85,
-              borderRadius: 15,
-              overflow: 'hidden',
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 5,
-            }}>
-            
-            {/* Header del Modal */}
-            <View
-              style={{
-                backgroundColor: '#113EB9',
-                padding: 15,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
-                📍 Ubicación - {mapData?.deviceID}
-              </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{color: 'white', marginRight: 10, fontSize: 14}}>
-                  Cierra en: {timeLeft}s
-                </Text>
-                <TouchableOpacity onPress={closeModal}>
-                  <IonIcon name="close" size={24} color="white" />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Contenido del Mapa */}
-            <View style={{flex: 1}}>
-              {mapData && (
-                <MapaScreen
-                  route={{
-                    params: mapData
-                  }}
-                  navigation={{
-                    goBack: closeModal, // Para que el botón "Volver" cierre el modal
-                    canGoBack: () => true,
-                  }}
-                />
-              )}
-            </View>
-          </View>
+<Modal
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={closeModal}
+>
+  <View
+    style={{
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    <View
+      style={{
+        backgroundColor: 'white',
+        width: width * 0.80,
+        height: height * 0.85,
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      }}
+    >
+      {/* Header */}
+      <View
+        style={{
+          backgroundColor: '#113EB9',
+          padding: 15,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+          Ubicación - {mapData?.deviceID}
+        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ color: 'white', marginRight: 10, fontSize: 14 }}>
+            Cierra en: {timeLeft}s
+          </Text>
+          <TouchableOpacity onPress={closeModal}>
+            <IonIcon name="close" size={24} color="white" />
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
+
+      {/* Contenido */}
+      <View style={{ flex: 1 }}>
+        {mapData && (
+          <MapaScreen
+            route={{ params: mapData }}
+            navigation={{
+              goBack: closeModal,
+              canGoBack: () => true,
+            }}
+          />
+        )}
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
     </View>
   );
 };
