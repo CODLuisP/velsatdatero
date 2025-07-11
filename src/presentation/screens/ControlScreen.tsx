@@ -92,7 +92,7 @@ const enviarAsignacionIMEI = async () => {
 
     try {
       const response = await fetch(
-        'https://velsat.pe:8585/api/Datero/asignar',
+        'https://villa.velsat.pe:8443/api/Datero/asignar',
         {
           method: 'POST',
           headers: {
@@ -150,7 +150,7 @@ const enviarAsignacionIMEI = async () => {
       const androidId = await DeviceInfo.getAndroidId();
       console.log('ANDROID_ID:', androidId);
 
-      const placaUrl = `https://velsat.pe:8585/api/Datero/urbano/${textPlaca}`;
+      const placaUrl = `https://villa.velsat.pe:8443/api/Datero/urbano/${textPlaca}`;
       const response = await fetch(placaUrl);
 
       if (response.status === 204) {
@@ -177,7 +177,7 @@ const enviarAsignacionIMEI = async () => {
       if (data?.isruta == '1') {
         const codigo = data.codigo.toString();
 
-        const logUrl = `https://velsat.pe:8585/api/Datero/logurb/${codigo}`;
+        const logUrl = `https://villa.velsat.pe:8443/api/Datero/logurb/${codigo}`;
         const logResponse = await fetch(logUrl);
         let logData: any[] = [];
 
@@ -215,7 +215,7 @@ const enviarAsignacionIMEI = async () => {
   const fetchDeviceIDs = async () => {
     try {
       const response = await fetch(
-        'https://velsat.pe:8585/api/Datero/devices/transporvilla',
+        'https://villa.velsat.pe:8443/api/Datero/devices/transporvilla',
       );
       if (!response.ok) {
         throw new Error('Error al obtener los device IDs');

@@ -290,7 +290,7 @@ class OfflineQueue {
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
       const response = await fetch(
-        'https://velsat.pe:8585/api/Datero/enviocontrol',
+        'https://villa.velsat.pe:8443/api/Datero/enviocontrol',
         {
           method: 'POST',
           headers: {
@@ -447,7 +447,7 @@ const enviarDatosAPI = async (
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos
 
     const response = await fetch(
-      'https://velsat.pe:8585/api/Datero/enviocontrol',
+      'https://villa.velsat.pe:8443/api/Datero/enviocontrol',
       {
         method: 'POST',
         headers: {
@@ -837,7 +837,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
 
     try {
       const response = await fetch(
-        `https://velsat.pe:8585/api/Datero/endruta/${deviceID}`,
+        `https://villa.velsat.pe:8443/api/Datero/endruta/${deviceID}`,
         {
           method: 'POST',
           headers: {
@@ -1219,7 +1219,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
           onPress: async () => {
             try {
               const response = await fetch(
-                `https://velsat.pe:8585/api/Datero/endruta/${deviceID}`,
+                `https://villa.velsat.pe:8443/api/Datero/endruta/${deviceID}`,
                 {
                   method: 'POST',
                   headers: {

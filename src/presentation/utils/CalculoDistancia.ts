@@ -37,7 +37,7 @@ const geocercaThree = turf.polygon([[
 
 export const verificarVehiculosEnGeocerca = async (rutaId: number) => {
   try {
-    const response = await fetch(`https://velsat.pe:8585/api/Datero/ruta/${rutaId}`
+    const response = await fetch(`https://villa.velsat.pe:8443/api/Datero/ruta/${rutaId}`
 );
     if (!response.ok) {
       throw new Error('Error al obtener datos de la API');
@@ -82,7 +82,7 @@ export const calcularDistancias = async (rutaId: number) => {
    
     const geofenceResults = await verificarVehiculosEnGeocerca(rutaId);
 
-    const response = await fetch(`https://velsat.pe:8585/api/Datero/ruta/${rutaId}`);
+    const response = await fetch(`https://villa.velsat.pe:8443/api/Datero/ruta/${rutaId}`);
     if (!response.ok) {
       throw new Error('Error al obtener datos de la API');
     }
@@ -152,7 +152,7 @@ export const calcularDistanciasVuelta = async (rutaId: number) => {
 
 
   try {
-    const response = await fetch(`https://velsat.pe:8585/api/Datero/ruta/${rutaId}`);
+    const response = await fetch(`https://villa.velsat.pe:8443/api/Datero/ruta/${rutaId}`);
     if (!response.ok) {
       throw new Error('Error al obtener datos de la API');
     }
