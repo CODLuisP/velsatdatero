@@ -46,7 +46,7 @@ const getDynamicMinutesForRoute5 = (
   // Convertir la hora a formato de segundos totales para comparación más precisa
   const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
-  // Definir los rangos de tiempo y sus respectivos minutos para ruta 5 (en segundos)
+  // Definir los rangos de tiempo y sus respectivos minutos para ruta 5 final (en segundos)
   const timeRanges = [
     {
       start: 6 * 3600 + 0 * 60 + 0,
@@ -61,7 +61,7 @@ const getDynamicMinutesForRoute5 = (
     {
       start: 6 * 3600 + 15 * 60 + 0,
       end: 6 * 3600 + 21 * 60 + 59,
-      minutes: [10, 37, 54, 70, 88, 118, 123],
+      minutes: [10, 37, 54, 70, 88, 118, 128],
     }, // 6:15:00 - 6:21:59
     {
       start: 6 * 3600 + 22 * 60 + 0,
@@ -449,8 +449,8 @@ export const getBusStopsData = (
         estimatedTime: '',
         duration: '',
         icon: 'location',
-        latitude: -7.147526,
-        longitude: -78.520503,
+        latitude: -12.063990,
+        longitude: -77.024997,
         isActive: false,
         isCompleted: false,
         isSkipped: false,
@@ -589,7 +589,7 @@ export const getBusStopsData = (
       {
         id: '7',
         name: 'GRIFO MILAGRO',
-        description: 'Control final',
+        description: 'Control Final',
         arrivalTime: arrivalTimes[6],
         estimatedTime: '',
         duration: '',
@@ -698,6 +698,8 @@ export const getBusStopsData = (
         isIntermediate: true,
       },
 
+
+      
       {
         id: '2.9',
         name: 'CDI / HIGUERETA',
@@ -875,7 +877,7 @@ export const getBusStopsData = (
       {
         id: '7',
         name: 'INSURGENTES',
-        description: 'Control 7',
+        description: 'Control Final',
         arrivalTime: arrivalTimes[6],
         estimatedTime: '',
         duration: '',
