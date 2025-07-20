@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, ScrollView, Modal, TouchableOpacity, Dimensions} from 'react-native';
+import {Text, View, ScrollView, Modal, TouchableOpacity, Dimensions, StatusBar} from 'react-native';
 import {globalStyles} from '../theme/styles';
 import {ListTimes} from '../components/shared/ListTimes';
 import {useRoute, useNavigation} from '@react-navigation/native';
@@ -387,25 +387,30 @@ export const RutaBusScreen = () => {
         )}
       </View>
 
-      {/* Modal del Mapa */}
+{/* Modal del Mapa */}
 <Modal
   animationType="fade"
   transparent={true}
   visible={modalVisible}
   onRequestClose={closeModal}
+  presentationStyle="overFullScreen" 
+  statusBarTranslucent={true}
 >
+ <StatusBar hidden={modalVisible} />
+
   <View
     style={{
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
       justifyContent: 'center',
       alignItems: 'center',
+      paddingTop: StatusBar.currentHeight || 0,
     }}
   >
     <View
       style={{
         backgroundColor: 'white',
-        width: width * 0.80,
+        width: width * 0.85,
         height: height * 0.85,
         overflow: 'hidden',
         shadowColor: '#000',
@@ -416,23 +421,24 @@ export const RutaBusScreen = () => {
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+        borderRadius: 10,
       }}
     >
       {/* Header */}
       <View
         style={{
-          backgroundColor: '#113EB9',
+          backgroundColor: '#ffb703',
           padding: 15,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+        <Text style={{ color: '#212529', fontSize: 18, fontWeight: 'bold' }}>
           Ubicación - {mapData?.deviceID}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: 'white', marginRight: 10, fontSize: 14 }}>
+          <Text style={{ color: '#212529', marginRight: 10, fontSize: 14 }}>
             Cierra en: {timeLeft}s
           </Text>
           <TouchableOpacity onPress={closeModal}>

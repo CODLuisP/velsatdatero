@@ -1259,8 +1259,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               );
               setIsTerminating(false); // Resetear la bandera en caso de error de red
             }
-            // No resetear isTerminating aquí, ya que RNRestart.Restart() unmontará el componente.
-            // Si hay un error, se resetea en los bloques catch/else.
+   
           },
         },
       ],
