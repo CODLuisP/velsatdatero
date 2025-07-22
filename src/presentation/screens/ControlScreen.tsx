@@ -28,8 +28,8 @@ type DrawerParamList = {
     isruta: string;
     deviceID: string;
     androidID: string;
-    fecreg:string;
-    codconductor:string;
+    fecreg: string;
+    codconductor: string;
     placa: string;
     logurb?: {
       codasig: string;
@@ -43,7 +43,181 @@ type DrawerParamList = {
   };
 };
 
-type AutoCompleteComponentProps = {};
+interface ControlAlertProps {
+  startTimeInMinutes?: number;
+  onTimeExpired?: () => void;
+}
+
+// Componente separado para la alerta
+const ControlAlert: React.FC<ControlAlertProps> = ({
+  startTimeInMinutes = 15,
+  onTimeExpired,
+}) => {
+  const [totalSeconds, setTotalSeconds] = useState(startTimeInMinutes * 60);
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isActive && totalSeconds > 0) {
+      interval = setInterval(() => {
+        setTotalSeconds(seconds => {
+          if (seconds <= 1) {
+            setIsActive(false);
+            onTimeExpired?.();
+            return 0;
+          }
+          return seconds - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, totalSeconds, onTimeExpired]);
+
+  // Calcular minutos y segundos
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  // Determinar el color de fondo y estado
+  const getAlertStyle = () => {
+    if (totalSeconds >= 300) {
+      // 5 minutos o más - ROJO
+      return {
+        backgroundColor: 'rgba(220, 38, 38, 0.8)',
+        iconColor: '#fca5a5',
+        textColor: '#FFF',
+        statusColor: '#FFF',
+        icon: 'time-outline',
+        status: 'PREPARACIÓN',
+      };
+    } else if (totalSeconds >= 60) {
+      // 1 minuto a 5 minutos - AMARILLO
+      return {
+        backgroundColor: 'rgba(245, 158, 11, 0.6)',
+        iconColor: '#fcd34d',
+        textColor: '#FFF',
+        statusColor: '#FFF',
+        icon: 'warning-outline',
+        status: 'PRÓXIMAMENTE',
+      };
+    } else 
+      // Menos de 59 segundos - VERDE con countdown
+      return {
+      backgroundColor: 'rgba(34, 197, 94, 0.6)',
+        iconColor: '#e9ecef',
+        textColor: '#FFF',
+        statusColor: '#FFF',
+        icon: 'timer-outline',
+        status: 'EN RUTA',
+      };
+    
+  };
+
+  const alertStyle = getAlertStyle();
+
+  const getTimeDisplay = () => {
+    if (totalSeconds <= 50 && totalSeconds > 0) {
+      return `${totalSeconds}s`;
+    } else if (totalSeconds === 0) {
+      return '¡INICIADO!';
+    } else {
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+  };
+
+  const getMainText = () => {
+    if (totalSeconds === 0) {
+      return 'Control iniciado';
+    } else if (totalSeconds <= 50) {
+      return 'Iniciando control en';
+    } else {
+      return 'Tu control empezará en';
+    }
+  };
+
+  return (
+    <View
+      style={{
+        backgroundColor: alertStyle.backgroundColor,
+        paddingVertical: 20,
+        paddingHorizontal: 18, 
+        marginBottom: 15,
+        borderLeftWidth: 4,
+        borderLeftColor: alertStyle.statusColor,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        minHeight: 75, 
+        marginLeft:10,
+      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+          <IonIcon
+            name={alertStyle.icon}
+            size={26} // Aumentado de 22 a 26
+            color={alertStyle.iconColor}
+          />
+          <View style={{marginLeft: 12, flex: 1}}>
+            <Text
+              style={{
+                color: alertStyle.textColor,
+                fontSize: 14,
+                fontWeight: '600',
+                marginBottom: 4,
+              }}>
+              {getMainText()}
+            </Text>
+            <Text
+              style={{
+                color: alertStyle.statusColor,
+                fontSize: 12, 
+                fontWeight: '500',
+                opacity: 0.9,
+              }}>
+              {alertStyle.status}
+            </Text>
+          </View>
+        </View>
+
+        <View style={{alignItems: 'flex-end'}}>
+          <Text
+            style={{
+              color: alertStyle.textColor,
+              fontSize: totalSeconds <= 50 ? 20 : 18, 
+              fontWeight: '700',
+              fontFamily: 'monospace',
+            }}>
+            {getTimeDisplay()}
+          </Text>
+          {totalSeconds > 0 && totalSeconds <= 50 && (
+            <Text
+              style={{
+                color: alertStyle.statusColor,
+                fontSize: 10, 
+                fontWeight: '600',
+                marginTop: 2, 
+              }}>
+              CONTADOR
+            </Text>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+};
 
 export const ControlScreen = () => {
   const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
@@ -55,19 +229,19 @@ export const ControlScreen = () => {
   const [dialogMessage, setDialogMessage] = React.useState('');
 
   const [deviceIDs, setDeviceIDs] = useState<string[]>([]);
-
   const [filteredData, setFilteredData] = useState<string[]>([]);
 
-  const { setVelocidad } = useAppContext();
+  const {setVelocidad} = useAppContext();
 
-
-  const pdfUrl =
-    'https://docs.google.com/document/d/12qnoT9BXVNt6CiheZcqhiJleG_pV1JU50EUu9jNT4zg/edit?usp=sharing';
   const hideDialog = () => setDialogVisible(false);
 
   const [imeiDialogVisible, setImeiDialogVisible] = useState(false);
   const [imeiPlacaInput, setImeiPlacaInput] = useState('');
   const [imeiAndroidId, setImeiAndroidId] = useState('');
+
+  const handleTimeExpired = () => {
+    Alert.alert('¡Control iniciado!', 'El tiempo de preparación ha terminado.');
+  };
 
   const handleAsignarIMEI = async () => {
     try {
@@ -79,7 +253,7 @@ export const ControlScreen = () => {
     }
   };
 
-const enviarAsignacionIMEI = async () => {
+  const enviarAsignacionIMEI = async () => {
     if (!imeiPlacaInput || !imeiAndroidId) {
       Alert.alert('Error', 'Placa o Android ID no válidos.');
       return;
@@ -183,7 +357,6 @@ const enviarAsignacionIMEI = async () => {
 
         if (logResponse.ok) {
           logData = await logResponse.json();
-          console.warn('No se pudo obtener logurb data');
         }
 
         navigation.navigate('RUTA BUS', {
@@ -196,8 +369,8 @@ const enviarAsignacionIMEI = async () => {
           androidID: data.androidID,
           placa: textPlaca,
           logurb: logData,
-          fecreg:data.fecreg,
-          codconductor:data.codconductor,
+          fecreg: data.fecreg,
+          codconductor: data.codconductor,
         });
 
         await AsyncStorage.setItem('placa', textPlaca);
@@ -243,7 +416,6 @@ const enviarAsignacionIMEI = async () => {
   const handleSelect = async (deviceID: string) => {
     setTextPlaca(deviceID);
     setFilteredData([]);
-
     await AsyncStorage.setItem('savedPlaca', deviceID);
   };
 
@@ -290,6 +462,24 @@ const enviarAsignacionIMEI = async () => {
             </Button>
           </Dialog.Actions>
         </Dialog>
+
+        <Dialog
+          visible={dialogVisible}
+          onDismiss={hideDialog}
+          style={styles.dialogContainer}>
+          <Dialog.Title style={styles.dialogTitle}>Aviso</Dialog.Title>
+          <Dialog.Content>
+            <Text style={styles.dialogMessage}>{dialogMessage}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={hideDialog}
+              mode="contained"
+              style={styles.confirmButton}>
+              Entendido
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
       </Portal>
 
       <View style={{flexDirection: 'row', flex: 1}}>
@@ -299,39 +489,31 @@ const enviarAsignacionIMEI = async () => {
             justifyContent: 'space-between',
             paddingBottom: 5,
             paddingRight: 10,
+            backgroundColor: '#001233',
           }}>
           <View style={{marginTop: 20}}>
             <Text style={globalStyles.tituloSide}>BIENVENIDO A</Text>
           </View>
 
-          <Image
-            source={require('../files/IMG/velsat.png')}
-            style={{
-              height: 105,
-              width: 105,
-              marginTop: 10,
-              marginBottom: 10,
-              alignSelf: 'center',
-              borderRadius: 10,
-            }}
-          />
+        <Image
+             source={require('../files/IMG/velsat.png')}
+             style={{
+               height: 105,
+               width: 105,
+               marginTop: 0,
+               marginBottom: 0,
+               alignSelf: 'center',
+               borderRadius: 10,
+             }}
+           />
 
-          <Button
-            mode="contained"
-            style={{
-              marginTop: 8,
-              borderRadius: 0,
-              padding: 5,
-              backgroundColor: '#113EB9',
-              marginLeft: 10,
-              marginRight: 10,
-            }}
-            labelStyle={{
-              color: 'white',
-            }}
-            onPress={() => console.log('Pressed')}>
-            Control
-          </Button>
+          {/* Alerta de Control */}
+          <View style={{marginVertical: 15}}>
+            <ControlAlert
+              startTimeInMinutes={1}
+              onTimeExpired={handleTimeExpired}
+            />
+          </View>
 
           <View style={globalStyles.containerControlText}>
             <Text style={globalStyles.version}>Versión 2.1</Text>
@@ -363,9 +545,9 @@ const enviarAsignacionIMEI = async () => {
 
         <View
           style={{
-            width: 1,
+            width: 0.5,
             height: '100%',
-            backgroundColor: '#e0e1dd',
+            backgroundColor: '#a3cef1',
           }}
         />
 
@@ -376,6 +558,7 @@ const enviarAsignacionIMEI = async () => {
             padding: 10,
             paddingLeft: 15,
             paddingRight: 10,
+            backgroundColor: '#001233',
           }}>
           <View>
             <View
@@ -391,8 +574,8 @@ const enviarAsignacionIMEI = async () => {
               }}>
               <Text
                 style={{
-                  fontSize: 18,
-                  color: '#003f88',
+                  fontSize: 20,
+                  color: '#fff',
                   fontWeight: '800',
                   letterSpacing: 0.5,
                   textTransform: 'uppercase',
@@ -402,9 +585,8 @@ const enviarAsignacionIMEI = async () => {
               <IonIcon
                 size={22}
                 name="bus"
-                color="#003f88"
+                color="#fff"
                 style={{
-                  backgroundColor: 'rgba(0, 63, 136, 0.1)',
                   borderRadius: 20,
                   padding: 8,
                 }}
@@ -414,11 +596,11 @@ const enviarAsignacionIMEI = async () => {
             <View style={globalStyles.control}>
               <Text
                 style={{
-                  color: '#003566',
-                  fontSize: 16,
+                  color: '#fff',
+                  fontSize: 14,
                   fontWeight: 'bold',
                 }}>
-                Placa Vehicular :
+                PLACA VEHICULAR:
               </Text>
               <TextInput
                 value={textPlaca}
@@ -448,12 +630,12 @@ const enviarAsignacionIMEI = async () => {
 
               <Text
                 style={{
-                  color: '#003566',
-                  fontSize: 16,
+                  color: '#fff',
+                  fontSize: 14,
                   fontWeight: 'bold',
                   marginTop: 10,
                 }}>
-                Usuario:
+                USUARIO:
               </Text>
               <TextInput
                 value={textUsuario}
@@ -472,7 +654,7 @@ const enviarAsignacionIMEI = async () => {
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 8}}>
             <Button
               mode="contained"
-              buttonColor={loading ? '#e6a000' : '#ffb703'} // Color más oscuro cuando carga
+              buttonColor={loading ? '#e6a000' : '#ffb703'}
               textColor="#212529"
               onPress={!loading ? handleNavigation : undefined}
               style={{
@@ -537,7 +719,6 @@ const styles = StyleSheet.create({
     color: '#0d3b66',
     backgroundColor: '#ced4da',
   },
-
   dialogContainer: {
     alignSelf: 'center',
     width: '70%',
@@ -600,7 +781,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#c1121f',
     borderRadius: 8,
   },
-    cancelButtonText: {
+  cancelButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
@@ -615,5 +796,10 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  dialogMessage: {
+    fontSize: 14,
+    color: '#374151',
+    lineHeight: 20,
   },
 });

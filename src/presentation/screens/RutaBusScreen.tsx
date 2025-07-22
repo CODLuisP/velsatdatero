@@ -14,7 +14,7 @@ import {
 
 import App from '../componentes/Rastredor';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {MapaScreen} from './MapaScreen'; // Importa tu componente de mapa
+import {MapaScreen} from './MapaScreen'; 
 
 type DistanceResult = {
   deviceID: string;

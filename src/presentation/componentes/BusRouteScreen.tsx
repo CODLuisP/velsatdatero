@@ -1274,9 +1274,9 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         <View style={styles.routeInfoContainer}>
           <Text style={styles.routeInfoText}>
             {codruta === '5'
-              ? `RUTA W 7504 | LA PERLA - SAN JUAN (A) HS: ${fechaini}`
+              ? `RUTA W 1234 | LA PERLA - SAN JUAN (A) HS: ${fechaini}`
               : codruta === '6'
-              ? `RUTA W 7504 | SAN JUAN - LA PERLA (B) HS: ${fechaini}`
+              ? `RUTA W 1234 | SAN JUAN - LA PERLA (B) HS: ${fechaini}`
               : `Ruta ${codruta}`}
           </Text>
           {queueStats.total > 0 && (
@@ -1338,7 +1338,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingHorizontal: 2,
+    paddingHorizontal: 0,
     paddingTop: 0,
     marginBottom: 0,
   },
@@ -1346,7 +1346,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#00509d',
     marginBottom: 8,
     paddingVertical: 8,
-    paddingHorizontal: 16,
     alignItems: 'center',
   },
   routeInfoText: {

@@ -11,6 +11,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {PermissionsAndroid, Platform} from 'react-native';
 import BusRouteScreen from './BusRouteScreen';
 import {useAppContext} from '../../context/VelocidadContext';
+import { IonIcon } from '../components/shared/IonIcon';
 
 interface LocationData {
   latitude: number;
@@ -191,28 +192,6 @@ const App: React.FC<RastreadorType> = ({
     }
   };
 
-  const formatDateTime = (timestamp: number): string => {
-    try {
-      return new Date(timestamp).toLocaleString('es-ES', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-    } catch {
-      return 'Fecha no disponible';
-    }
-  };
-
-  const formatCoordinate = (coord: number): string => {
-    try {
-      return coord.toFixed(6);
-    } catch {
-      return '0.000000';
-    }
-  };
 
   useEffect(() => {
     getInitialLocation();
@@ -231,54 +210,6 @@ const App: React.FC<RastreadorType> = ({
 
     return (
       <>
-        {/* <View style={styles.locationContainer}>
-          <View style={styles.coordinateCard}>
-            <View style={styles.coordRow}>
-              <Text style={styles.cardTitle}>Coordenadas :</Text>
-              <Text style={styles.coordLabel}>Latitud:</Text>
-              <Text style={styles.coordValue}>
-                {formatCoordinate(location.latitude)}°
-              </Text>
-              <Text style={styles.coordLabel}>Longitud:</Text>
-              <Text style={styles.coordValue}>
-                {formatCoordinate(location.longitude)}°
-                
-              </Text>
-
-           {location.speed !== null && (
-                  <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Velocidad:</Text>
-                    <Text style={styles.detailValue}>
-                      {(location.speed * 3.6).toFixed(1)} km/h
-                    </Text>
-                  </View>
-                )}
-
-
-              
-
-
-            </View>
-
-            <View style={styles.coordRow}>
-              <Text style={styles.cardTitle}> Última Actualización : </Text>
-              <Text style={styles.timestampText}>
-                {formatDateTime(location.timestamp)}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.statusCard}>
-            <View style={styles.statusIndicator}>
-              <View style={styles.statusDot} />
-              <Text style={styles.statusText}>
-                {loading
-                  ? 'Mejorando precisión...'
-                  : 'Actualizando en tiempo real'}
-              </Text>
-            </View>
-          </View>
-        </View> */}
 
         <View style={styles.geocercasContainer}>
           <BusRouteScreen
@@ -297,7 +228,7 @@ const App: React.FC<RastreadorType> = ({
           />
 
           {/* <Text>{codconductor}</Text>
-          <Text>{fecreg}</Text> */}
+          <Text>{fecreg}</Text>
           {/* {logurb.map((item, index) => (
             <View key={index} style={{marginBottom: 10}}>
               <Text>{item.nom_control}</Text>
@@ -317,16 +248,15 @@ const App: React.FC<RastreadorType> = ({
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {loading && (
           <View style={styles.loadingContainer}>
-            {/* Icono de ubicación con círculo */}
             <View style={styles.locationIconContainer}>
               <View style={styles.locationIconCircle}>
-                <Text style={styles.locationIcon}>📡</Text>
+                  <IonIcon name="location" size={32} color="#ff6b35" />
               </View>
             </View>
 
             <ActivityIndicator
               size="large"
-              color="#2196F3"
+              color="#00509d"
               style={styles.activityIndicator}
             />
 
@@ -342,12 +272,6 @@ const App: React.FC<RastreadorType> = ({
                 : 'Conectando con satélites GPS'}
             </Text>
 
-            {/* Barra de progreso simple */}
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar} />
-            </View>
-
-            {/* Estado del GPS */}
             <View style={styles.gpsStatusContainer}>
               <View style={styles.gpsStatusDot} />
               <Text style={styles.gpsStatusText}>GPS Activo</Text>
@@ -372,15 +296,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#edede9',
   },
-  header: {
-    flexDirection: 'row',
-    backgroundColor: '#1a659e',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    paddingTop: 40,
-  },
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -389,31 +305,30 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 5,
+    paddingVertical: 5,
   },
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 400, // Ocupa más espacio
+    minHeight: 400, 
     paddingVertical: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#f8f9ff', // Fondo suave
+    backgroundColor: '#f8f9ff', 
     marginHorizontal: -5,
-    borderRadius: 12,
     marginTop: 0,
   },
   locationIconContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   locationIconCircle: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#ffeedd',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#2196F3',
+    borderColor: '#fb8500',
     elevation: 4,
     shadowColor: '#2196F3',
     shadowOffset: {width: 0, height: 2},
@@ -424,19 +339,19 @@ const styles = StyleSheet.create({
     fontSize: 36,
   },
   activityIndicator: {
-    marginBottom: 20,
-    transform: [{scale: 1.2}], // Un poco más grande
+    marginBottom: 10,
+    transform: [{scale: 1.2}],
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 20, // Más grande
-    color: '#1a659e', // Color azul del tema
+    fontSize: 20, 
+    color: '#1a659e', 
     fontWeight: 'bold',
     textAlign: 'center',
   },
   loadingSubtext: {
     marginTop: 8,
-    fontSize: 16, // Un poco más grande
+    fontSize: 16, 
     color: '#666',
     textAlign: 'center',
     lineHeight: 22,
@@ -460,10 +375,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#e8f5e8',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: '#c8e6c9',
-    marginTop: 10,
+    marginTop: 5,
   },
   gpsStatusDot: {
     width: 10,
@@ -477,7 +392,7 @@ const styles = StyleSheet.create({
     color: '#2e7d32',
     fontWeight: '600',
   },
-  // Resto de estilos sin cambios:
+  
   errorContainer: {
     backgroundColor: '#ffebee',
     padding: 15,
@@ -497,96 +412,7 @@ const styles = StyleSheet.create({
   geocercasContainer: {
     flex: 1,
   },
-  coordinateCard: {
-    backgroundColor: '#fff',
-    padding: 5,
-    borderRadius: 0,
-  },
-  detailsCard: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  timestampCard: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  statusCard: {
-    backgroundColor: '#e8f5e8',
-    padding: 10,
-    borderRadius: 0,
-    borderLeftWidth: 4,
-    borderLeftColor: '#4caf50',
-  },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  coordRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    gap: 10,
-  },
-  coordLabel: {
-    fontSize: 16,
-    color: '#666',
-    fontWeight: '500',
-  },
-  coordValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2196F3',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  detailValue: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
-  },
-  timestampText: {
-    fontSize: 14,
-    color: '#333',
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-  },
-  statusIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4caf50',
-    marginRight: 8,
-  },
-  statusText: {
-    fontSize: 14,
-    color: '#2e7d32',
-    fontWeight: '500',
-  },
+
 });
 
 export default App;

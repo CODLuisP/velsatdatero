@@ -5,7 +5,7 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 
-import {Image, Linking, Text, View} from 'react-native';
+import {Image, Linking, Text, TouchableOpacity, View} from 'react-native';
 import {ControlScreen} from '../screens/ControlScreen';
 import {RutaBusScreen} from '../screens/RutaBusScreen';
 import {MapaScreen} from '../screens/MapaScreen';
@@ -16,13 +16,72 @@ import {globalStyles} from '../theme/styles';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {useAppContext} from '../../context/VelocidadContext';
+import DeviceInfo from 'react-native-device-info';
 
 const Drawer = createDrawerNavigator();
 
 const CurrentTime = React.memo(() => {
   const [currentTime, setCurrentTime] = useState('');
+  const [batteryLevel, setBatteryLevel] = useState(0);
 
   const {velocidad, modoVisualizacion} = useAppContext();
+
+  useEffect(() => {
+    const getBatteryLevel = async () => {
+      try {
+        const level = await DeviceInfo.getBatteryLevel();
+        setBatteryLevel(Math.round(level * 100)); // Convertir a porcentaje
+      } catch (error) {
+        console.log('Error getting battery level:', error);
+      }
+    };
+
+    getBatteryLevel();
+
+    // Actualizar cada 30 segundos
+    const interval = setInterval(getBatteryLevel, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getBatteryColor = (level: any) => {
+    if (level > 50) return '#4CAF50'; // Verde
+    if (level > 20) return '#FF9800'; // Naranja
+    return '#F44336'; // Rojo
+  };
+
+  const BatteryIndicator = ({level}: any) => (
+    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View
+        style={{
+          width: 20,
+          height: 12,
+          borderWidth: 1,
+          borderColor: '#fff',
+          borderRadius: 2,
+          backgroundColor: 'transparent',
+          marginRight: 2,
+        }}>
+        <View
+          style={{
+            width: `${level}%`,
+            height: '100%',
+            backgroundColor: getBatteryColor(level),
+            borderRadius: 1,
+          }}
+        />
+      </View>
+      <View
+        style={{
+          width: 2,
+          height: 6,
+          backgroundColor: '#fff',
+          borderRadius: 1,
+        }}
+      />
+      <Text style={{color: '#fff', fontSize: 12, marginLeft: 4}}>{level}%</Text>
+    </View>
+  );
 
   useEffect(() => {
     const updateTime = () => {
@@ -59,11 +118,47 @@ const CurrentTime = React.memo(() => {
           marginLeft: 10,
           justifyContent: 'center',
         }}>
-        <Text style={globalStyles.titleRuta}>{velocidad}</Text>
-        <Text style={globalStyles.titleModo}>{modoVisualizacion}</Text>
-        {modoVisualizacion === 'Modo Visualización' && (
-          <IonIcon name="eye" size={25} color="#fff" />
-        )}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={globalStyles.titleModo}>{modoVisualizacion}</Text>
+
+          {modoVisualizacion === 'Modo Visualización' ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <IonIcon name="cellular-outline" size={25} color="#fff" />
+              <View style={{marginLeft: 8}}>
+                <BatteryIndicator level={batteryLevel} />
+              </View>
+                 <IonIcon
+                name="earth-outline"
+                size={20}
+                color="#fff"
+                style={{marginLeft: 8}}
+              />
+            </View>
+          ) : (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <IonIcon
+                name="earth-outline"
+                size={20}
+                color="#fff"
+                style={{marginLeft: 8}}
+              />
+              <IonIcon
+                name="ellular-outline"
+                size={20}
+                color="#fff"
+                style={{marginLeft: 8}}
+              />
+              <View style={{marginLeft: 8}}>
+                <BatteryIndicator level={batteryLevel} />
+              </View>
+            </View>
+          )}
+        </View>
       </View>
 
       <View
@@ -168,6 +263,7 @@ const CustomDrawerContent = React.memo((props: DrawerContentComponentProps) => {
           marginTop: -5,
           height: '100%',
           justifyContent: 'space-between',
+          backgroundColor: '#001233',
         }}>
         <View style={{marginTop: 20}}>
           <Text style={globalStyles.tituloSide}>BIENVENIDO A</Text>
@@ -183,21 +279,20 @@ const CustomDrawerContent = React.memo((props: DrawerContentComponentProps) => {
             borderRadius: 10,
           }}
         />
-
-        <DrawerItem
-          label="Control"
-          onPress={() => navigation.navigate('Control')}
-          style={{
-            backgroundColor: '#113EB9',
-            borderRadius: 10,
-            padding: '1%',
-          }}
-          labelStyle={{
-            color: '#FFFFFF',
-            textAlign: 'center',
-          }}
-          pressColor="rgba(255, 255, 255, 0.1)"
-        />
+        <DrawerContentScrollView>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Control')}
+            style={{
+              backgroundColor: '#113EB9',
+              borderRadius: 10,
+              padding: 12,
+              marginHorizontal: 10,
+              marginVertical: 5,
+              alignItems: 'center',
+            }}>
+            <Text style={{color: '#fff', fontSize: 14}}>INICIO</Text>
+          </TouchableOpacity>
+        </DrawerContentScrollView>
 
         <View style={globalStyles.containerControlText}>
           <Text style={globalStyles.version}>Versión 2.0</Text>
