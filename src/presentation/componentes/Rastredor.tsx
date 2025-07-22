@@ -216,7 +216,6 @@ const App: React.FC<RastreadorType> = ({
             key={codruta}
             currentLatitude={location.latitude}
             currentLongitude={location.longitude}
-            radioGeocerca={35}
             codruta={codruta}
             codasig={codasig}
             logurb={logurb}

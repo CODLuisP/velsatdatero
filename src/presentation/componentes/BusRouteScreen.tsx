@@ -108,7 +108,6 @@ interface ControlData {
 interface BusRouteScreenProps {
   currentLatitude: number;
   currentLongitude: number;
-  radioGeocerca?: number;
   codruta: string;
   codasig: string;
   logurb: ControlData[];
@@ -633,7 +632,6 @@ const calculateDistance = (
 const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   currentLatitude,
   currentLongitude,
-  radioGeocerca = 35,
   codruta,
   codasig,
   logurb,
@@ -908,7 +906,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
             stop.longitude,
           );
 
-          if (distance <= radioGeocerca) {
+          if (distance <= stop.radioGeocerca) {
             const now = new Date();
             const horaLlegada = moment().tz('America/Lima').format('HH:mm:ss');
             const finalDuration = stop.isIntermediate
@@ -1047,7 +1045,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     currentLatitude,
     currentLongitude,
     androidIdLocal,
-    radioGeocerca,
     codasig,
     androidID,
   ]);
@@ -1284,7 +1281,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               longitude={stop.longitude}
               currentLatitude={currentLatitude}
               currentLongitude={currentLongitude}
-              radioGeocerca={radioGeocerca}
+              radioGeocerca={stop.radioGeocerca}
               onStopCompleted={handleStopCompleted}
             />
             {index < busStops.length - 1 && (
