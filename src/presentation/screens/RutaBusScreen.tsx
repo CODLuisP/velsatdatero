@@ -1,97 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, ScrollView, Modal, TouchableOpacity, Dimensions, StatusBar} from 'react-native';
+import {Text, View, ScrollView} from 'react-native';
 import {globalStyles} from '../theme/styles';
 import {ListTimes} from '../components/shared/ListTimes';
-import {useRoute, useNavigation} from '@react-navigation/native';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {useRoute} from '@react-navigation/native';
 import {formatPlaca} from '../utils/ObtenerNombre';
 import {processRightData} from '../utils/CalcularDiffs';
 import {IonIcon} from '../components/shared/IonIcon';
-import {
-  calcularDistancias,
-  calcularDistanciasVuelta,
-} from '../utils/CalculoDistancia';
-
+import {calcularDistancias, calcularDistanciasVuelta} from '../utils/CalculoDistancia';
 import App from '../componentes/Rastredor';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {MapaScreen} from './MapaScreen'; 
 
 type DistanceResult = {
   deviceID: string;
   distance: number;
 };
 
-type DrawerParamList = {
-  Control: undefined;
-  Mapa: {
-    deviceID: string;
-    latitud: number;
-    longitud: number;
-    direccion: string;
-    codigo: string;
-    fechaini: string;
-    codruta: string;
-    placa: string;
-  };
-  RutaBus: {
-    codigo: string;
-    fechaini: string;
-    fechafin: string | null;
-    codruta: string;
-    isruta: string;
-    deviceID: string;
-    androidID: string;
-    codconductor: string;
-    fecreg: string;
-    placa: string;
-    logurb?: {
-      codasig: string;
-      deviceid: string;
-      nom_control: string;
-      hora_estimada: string;
-      hora_llegada: string;
-      volado: string;
-      fecha: string;
-    }[];
-  };
-};
-
-const {width, height} = Dimensions.get('window');
-
 export const RutaBusScreen = () => {
-  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
-  const [timeData, setTimeData] = useState<
-    {coddetacontrol: string; tiempogps: number}[]
-  >([]);
   const route = useRoute();
-
-  // Estados para el modal del mapa
-  const [modalVisible, setModalVisible] = useState(false);
-  const [mapData, setMapData] = useState<{
-    deviceID: string;
-    latitud: number;
-    longitud: number;
-    direccion: string;
-    codigo: string;
-    fechaini: number;
-    codruta: string;
-    placa: string;
-    timeData?: {coddetacontrol: string; tiempogps: number}[];
-    timesControl?: {
-      codigo: string;
-      coddetallecontrol: string;
-      timecontrol: number;
-    }[];
-  } | null>(null);
-  const [timeLeft, setTimeLeft] = useState(8);
-  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null);
-
   const {
     codigo,
     fechaini,
-    fechafin,
     codruta,
-    isruta,
     deviceID,
     androidID,
     placa,
@@ -154,63 +83,6 @@ export const RutaBusScreen = () => {
 
     return () => clearInterval(intervalId);
   }, [rutaId]);
-
-  // Función para mostrar el modal del mapa
-  const handleShowMap = (
-    deviceID: string,
-    latitud: number,
-    longitud: number,
-    direccion: string,
-  ) => {
-    setMapData({
-      deviceID,
-      latitud,
-      longitud,
-      direccion,
-      codigo,
-      fechaini: parseInt(fechaini), // Convertir a number
-      codruta,
-      placa,
-      timeData, // Incluir timeData
-      timesControl: [], // Incluir timesControl vacío o con datos si los tienes
-    });
-    setModalVisible(true);
-    setTimeLeft(8);
-
-    // Contador regresivo
-    const countdown = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(countdown);
-          setModalVisible(false);
-          setTimeLeft(8);
-          return 8;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    setCountdownInterval(countdown);
-  };
-
-  // Función para cerrar el modal
-  const closeModal = () => {
-    if (countdownInterval) {
-      clearInterval(countdownInterval);
-      setCountdownInterval(null);
-    }
-    setModalVisible(false);
-    setTimeLeft(8);
-  };
-
-  // Limpiar el intervalo cuando el componente se desmonte
-  useEffect(() => {
-    return () => {
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-      }
-    };
-  }, [countdownInterval]);
 
   if (error) {
     return (
@@ -372,98 +244,12 @@ export const RutaBusScreen = () => {
                     vehicle.deviceID.toLowerCase() === placa.toLowerCase()
                   }
                   diff={vehicle.diff === 0 ? 1 : vehicle.diff}
-                  onPress={() =>
-                    handleShowMap(
-                      vehicle.deviceID,
-                      vehicle.lastValidLatitude,
-                      vehicle.lastValidLongitude,
-                      vehicle.direccion,
-                    )
-                  }
                 />
               ));
             })()}
           </ScrollView>
         )}
-      </View>
-
-{/* Modal del Mapa */}
-<Modal
-  animationType="fade"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={closeModal}
-  presentationStyle="overFullScreen" 
-  statusBarTranslucent={true}
->
- <StatusBar hidden={modalVisible} />
-
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingTop: StatusBar.currentHeight || 0,
-    }}
-  >
-    <View
-      style={{
-        backgroundColor: 'white',
-        width: width * 0.85,
-        height: height * 0.85,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        borderRadius: 10,
-      }}
-    >
-      {/* Header */}
-      <View
-        style={{
-          backgroundColor: '#ffb703',
-          padding: 15,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Text style={{ color: '#212529', fontSize: 18, fontWeight: 'bold' }}>
-          Ubicación - {mapData?.deviceID}
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: '#212529', marginRight: 10, fontSize: 14 }}>
-            Cierra en: {timeLeft}s
-          </Text>
-          <TouchableOpacity onPress={closeModal}>
-            <IonIcon name="close" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Contenido */}
-      <View style={{ flex: 1 }}>
-        {mapData && (
-          <MapaScreen
-            route={{ params: mapData }}
-            navigation={{
-              goBack: closeModal,
-              canGoBack: () => true,
-            }}
-          />
-        )}
-      </View>
-    </View>
-  </View>
-</Modal>
-
-
+      </View>      
     </View>
   );
 };
