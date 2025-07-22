@@ -37,23 +37,23 @@ const CustomNotification = ({
   const getBackgroundColor = () => {
     switch (type) {
       case 'success':
-        return '#4CAF50'; // Verde para éxito
+        return '#4CAF50'; 
       case 'error':
-        return '#dc3545'; // Rojo para error
+        return '#dc3545'; 
       case 'info':
       default:
-        return '#00509d'; // Azul para información general, coincidiendo con el tema
+        return '#00509d'; 
     }
   };
 
   const notificationStyles = StyleSheet.create({
     container: {
-      backgroundColor: getBackgroundColor(), // Fondo dinámico
+      backgroundColor: getBackgroundColor(), 
       padding: 10,
       alignSelf: 'center',
       width: '91%',
       alignItems: 'center',
-      shadowColor: '#000', // Sombra para profundidad
+      shadowColor: '#000', 
       shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
@@ -63,17 +63,19 @@ const CustomNotification = ({
       fontWeight: 'bold',
       fontSize: 16,
       textAlign: 'center',
-      color: '#fff', // Texto blanco para mejor contraste
+      color: '#fff',
     },
     description: {
       textAlign: 'center',
-      color: '#fff', // Texto blanco
+      color: '#fff', 
     },
   });
   return (
     <View style={notificationStyles.container}>
       {title && <Text style={notificationStyles.title}>{title}</Text>}
-      {description && <Text style={notificationStyles.description}>{description}</Text>}
+      {description && (
+        <Text style={notificationStyles.description}>{description}</Text>
+      )}
     </View>
   );
 };
@@ -88,7 +90,7 @@ export const mostrarNotificacion = (
     Component: props => <CustomNotification {...props} type={type} />,
     title: titulo,
     description: descripcion,
-    duration: 3000, // La notificación se mostrará por 5 segundos
+    duration: 3000, 
     onHidden: onHidden,
   });
 };
@@ -423,7 +425,6 @@ const enviarDatosAPI = async (
     const netInfo = await NetInfo.fetch();
     if (!netInfo.isConnected) {
       console.log(`🌐 Sin conexión, agregando a cola offline: ${busStop.name}`);
-      // Agregar a cola offline
       const offlineQueue = OfflineQueue.getInstance();
       offlineQueue.addToQueue(busStop, {
         codasig,
@@ -436,13 +437,12 @@ const enviarDatosAPI = async (
         codruta,
       });
       return {
-        success: true, // Consideramos éxito porque se guardó en cola
+        success: true, 
         queued: true,
         message: 'Guardado en cola offline',
       };
     }
 
-    // Implementar timeout manual con AbortController
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos
 
@@ -471,7 +471,6 @@ const enviarDatosAPI = async (
         response.status,
         response.statusText,
       );
-      // Agregar a cola offline por error HTTP
       const offlineQueue = OfflineQueue.getInstance();
       offlineQueue.addToQueue(busStop, {
         codasig,
@@ -484,14 +483,13 @@ const enviarDatosAPI = async (
         codruta,
       });
       return {
-        success: true, // Consideramos éxito porque se guardó en cola
+        success: true, 
         queued: true,
         message: `Error HTTP ${response.status}, guardado en cola offline`,
       };
     }
   } catch (error) {
     console.error(`💥 Error de red para ${busStop.name}:`, error);
-    // Agregar a cola offline por error de red
     const offlineQueue = OfflineQueue.getInstance();
     offlineQueue.addToQueue(busStop, {
       codasig,
@@ -504,13 +502,12 @@ const enviarDatosAPI = async (
       codruta,
     });
     return {
-      success: true, // Consideramos éxito porque se guardó en cola
+      success: true, 
       queued: true,
       message: 'Error de red, guardado en cola offline',
     };
   }
 };
-
 
 const calculateDuration = (
   arrivalTime: string,
@@ -577,8 +574,7 @@ const calculateDuration = (
     if (isCompleted) {
       const minutes = Math.floor(Math.abs(diffInSeconds) / 60);
       const seconds = Math.abs(diffInSeconds) % 60;
-      
-      // CAMBIO AQUÍ: Incluir segundos cuando está completado
+
       if (minutes > 0 && seconds > 0) {
         return `-${minutes}min ${seconds}seg`;
       } else if (minutes > 0) {
@@ -597,7 +593,6 @@ const calculateDuration = (
   const seconds = diffInSeconds % 60;
 
   if (isCompleted) {
-    // CAMBIO AQUÍ: Incluir segundos cuando está completado
     if (minutes > 0 && seconds > 0) {
       return `+${minutes}min ${seconds}seg`;
     } else if (minutes > 0) {
@@ -658,9 +653,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   });
   const {setModoVisualizacion} = useAppContext();
 
-  // State to prevent multiple termination attempts
   const [isTerminating, setIsTerminating] = useState(false);
-  // State to prevent repeated unauthorized alerts for auto-termination
   const [
     hasUnauthorizedAutoTerminateAlertBeenShown,
     setHasUnauthorizedAutoTerminateAlertBeenShown,
@@ -688,19 +681,16 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     }
   }, [androidIdLocal, androidID, setModoVisualizacion]);
 
-  // Efecto para monitorear la cola offline
   useEffect(() => {
     const interval = setInterval(() => {
       const offlineQueue = OfflineQueue.getInstance();
       const stats = offlineQueue.getQueueStats();
       setQueueStats(stats);
-      // Intentar procesar la cola cada minuto
       offlineQueue.processQueue();
-    }, 60000); // Cada minuto
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Efecto para procesar cola cuando se recupera la conexión
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       if (state.isConnected) {
@@ -799,13 +789,12 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     return integrateLogurbData(initialStops);
   });
 
-  // New function for automatic route termination
   const autoTerminateRoute = useCallback(async () => {
     if (isTerminating) {
       console.log('Already terminating, skipping autoTerminateRoute call.');
       return;
     }
-    setIsTerminating(true); // Set terminating flag immediately
+    setIsTerminating(true);
 
     if (androidID !== androidIdLocal) {
       if (!hasUnauthorizedAutoTerminateAlertBeenShown) {
@@ -814,13 +803,12 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
           'Este dispositivo no tiene permisos para terminar rutas automáticamente.',
           [{text: 'OK'}],
         );
-        setHasUnauthorizedAutoTerminateAlertBeenShown(true); // Mark alert as shown
+        setHasUnauthorizedAutoTerminateAlertBeenShown(true);
       }
-      setIsTerminating(false); // Reset terminating flag if unauthorized
+      setIsTerminating(false);
       return;
     }
 
-    // Reset the unauthorized alert flag if authorization is now good
     if (hasUnauthorizedAutoTerminateAlertBeenShown) {
       setHasUnauthorizedAutoTerminateAlertBeenShown(false);
     }
@@ -831,7 +819,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
       console.log(
         `🚫 No se puede terminar la ruta automáticamente: ${currentQueueStats.pending} elementos pendientes en la cola offline.`,
       );
-      setIsTerminating(false); // Reset terminating flag if queue is not empty
+      setIsTerminating(false);
       return;
     }
 
@@ -847,12 +835,12 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
       );
 
       if (response.ok) {
-        offlineQueue.clearQueue(); // Clear offline queue before restarting
+        offlineQueue.clearQueue();
         mostrarNotificacion(
           'Ruta Terminada',
           'Su ruta se ha terminado exitosamente.',
-          'success', // Tipo de notificación de éxito
-          () => RNRestart.Restart(), // Reiniciar directamente cuando la notificación se oculte
+          'success',
+          () => RNRestart.Restart(),
         );
       } else {
         console.error(
@@ -863,9 +851,9 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         mostrarNotificacion(
           'Error',
           'Aún no se terminó la ruta automáticamente.',
-          'error', // Tipo de notificación de error
+          'error',
         );
-        setIsTerminating(false); // Reset terminating flag on API error
+        setIsTerminating(false);
       }
     } catch (error) {
       console.error(
@@ -875,12 +863,10 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
       mostrarNotificacion(
         'Error de Conexión',
         'Problema de conexión al terminar la ruta. Verifica tu internet.',
-        'error', // Tipo de notificación de error
+        'error',
       );
-      setIsTerminating(false); // Reset terminating flag on network error
+      setIsTerminating(false);
     }
-    // No resetear isTerminating aquí en el finally, ya que RNRestart.Restart() unmontará el componente.
-    // Si hay un error, se resetea en los bloques catch/else.
   }, [
     androidID,
     androidIdLocal,
@@ -889,14 +875,13 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     hasUnauthorizedAutoTerminateAlertBeenShown,
   ]);
 
-  // Efecto para disparar la terminación automática
   useEffect(() => {
     const lastStop = busStops[busStops.length - 1];
     if (
       lastStop &&
       lastStop.isCompleted &&
       queueStats.total === 0 &&
-      !isTerminating // Asegurarse de que no haya un proceso de terminación en curso
+      !isTerminating
     ) {
       console.log(
         '🎉 Última parada completada y cola vacía. Iniciando terminación automática...',
@@ -1068,11 +1053,10 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   ]);
 
   useEffect(() => {
-    // Re-initialize busStops when codruta or logurb change
     const initialStops = getBusStopsData(codruta, arrivalTimes);
     const integratedStops = integrateLogurbData(initialStops);
     setBusStops(integratedStops);
-  }, [codruta, logurb, fechaini]); // Added fechaini as it affects arrivalTimes
+  }, [codruta, logurb, fechaini]);
 
   const handleStopCompleted = (
     completedStopId: string,
@@ -1086,7 +1070,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
 
       if (completedIndex !== -1) {
         const stop = updatedStops[completedIndex];
-        // If horaLlegada is not in 24-hour format, convert it
         const horaLlegada24 =
           horaLlegada.includes('m.') ||
           horaLlegada.includes('AM') ||
@@ -1124,7 +1107,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         };
         updatedStops[completedIndex] = completedStop;
 
-        // Send data with offline queue system
         enviarDatosAPI(
           completedStop,
           codasig,
@@ -1185,11 +1167,11 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   };
 
   const handleTerminarRuta = async () => {
-    if (isTerminating) { // Evitar múltiples llamadas si ya se está terminando
+    if (isTerminating) {
       console.log('Already terminating, skipping manual termination call.');
       return;
     }
-    setIsTerminating(true); // Establecer la bandera de terminación
+    setIsTerminating(true);
 
     if (androidID !== androidIdLocal) {
       Alert.alert(
@@ -1197,7 +1179,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         'Este dispositivo no tiene permisos para terminar rutas.',
         [{text: 'OK'}],
       );
-      setIsTerminating(false); // Resetear la bandera si no está autorizado
+      setIsTerminating(false);
       return;
     }
 
@@ -1211,7 +1193,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         {
           text: 'Cancelar',
           style: 'cancel',
-          onPress: () => setIsTerminating(false), // Resetear la bandera si se cancela
+          onPress: () => setIsTerminating(false),
         },
         {
           text: 'Terminar',
@@ -1229,14 +1211,13 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               );
 
               if (response.ok) {
-                // Limpiar cola offline antes de reiniciar
                 const offlineQueue = OfflineQueue.getInstance();
                 offlineQueue.clearQueue();
                 mostrarNotificacion(
                   'Ruta Terminada',
                   'Su ruta se ha terminado exitosamente.',
-                  'success', // Tipo de notificación de éxito
-                  () => RNRestart.Restart(), // Reiniciar directamente cuando la notificación se oculte
+                  'success',
+                  () => RNRestart.Restart(),
                 );
               } else {
                 console.error(
@@ -1247,19 +1228,18 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
                 mostrarNotificacion(
                   'Error',
                   'No se pudo terminar la ruta. Inténtalo de nuevo.',
-                  'error', // Tipo de notificación de error
+                  'error',
                 );
-                setIsTerminating(false); // Resetear la bandera en caso de error de API
+                setIsTerminating(false);
               }
             } catch (error) {
               mostrarNotificacion(
                 'Error',
                 'Problema de conexión. Verifica tu internet.',
-                'error', // Tipo de notificación de error
+                'error',
               );
-              setIsTerminating(false); // Resetear la bandera en caso de error de red
+              setIsTerminating(false);
             }
-   
           },
         },
       ],

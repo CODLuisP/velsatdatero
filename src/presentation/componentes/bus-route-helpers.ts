@@ -43,10 +43,8 @@ const getDynamicMinutesForRoute5 = (
   minutes: number,
   seconds: number = 0,
 ): number[] => {
-  // Convertir la hora a formato de segundos totales para comparación más precisa
   const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
-  // Definir los rangos de tiempo y sus respectivos minutos para ruta 5 final (en segundos)
   const timeRanges = [
     {
       start: 6 * 3600 + 0 * 60 + 0,
@@ -85,28 +83,22 @@ const getDynamicMinutesForRoute5 = (
     }, // 6:43:00 - 6:43:59
   ];
 
-  // Buscar el rango de tiempo que corresponde
   for (const range of timeRanges) {
     if (totalSeconds >= range.start && totalSeconds <= range.end) {
       return range.minutes;
     }
   }
 
-  // Si no está en ningún rango específico (después de 6:43:59 o antes de 6:00:00), usar los minutos constantes
-  // Los últimos minutos de la tabla (6:43): [12, 45, 64, 85, 105, 137, 147]
   return [12, 45, 64, 85, 105, 137, 147];
 };
 
-// Función para obtener los minutos dinámicos de la ruta 6
 const getDynamicMinutesForRoute6 = (
   hours: number,
   minutes: number,
   seconds: number = 0,
 ): number[] => {
-  // Convertir la hora a formato de segundos totales para comparación más precisa
   const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
-  // Definir los rangos de tiempo y sus respectivos minutos (en segundos)
   const timeRanges = [
     {
       start: 4 * 3600 + 55 * 60 + 0,
@@ -266,19 +258,15 @@ const getDynamicMinutesForRoute6 = (
     }
   }
 
-  // Si no está en ningún rango específico (después de 7:25:59), usar los minutos constantes
-  // Los últimos minutos de la tabla (7:25): [5, 15, 48, 72, 92, 122, 142]
   return [5, 15, 48, 72, 92, 122, 142];
 };
 
-// Función auxiliar para formatear tiempo en formato 24 horas
 const formatTime24h = (hours: number, minutes: number): string => {
   return `${hours.toString().padStart(2, '0')}:${minutes
     .toString()
     .padStart(2, '0')}`;
 };
 
-// Función auxiliar para convertir formato 12h a 24h si es necesario
 const convertTo24h = (time12h: string): string => {
   const [time, modifier] = time12h.split(' ');
   let [hours, minutes] = time.split(':').map(Number);
@@ -312,6 +300,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -328,6 +317,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
       {
         id: '1.3',
@@ -343,6 +333,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -359,6 +350,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -375,6 +367,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -391,6 +384,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -407,6 +401,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
       {
         id: '2.3',
@@ -418,11 +413,11 @@ export const getBusStopsData = (
         icon: 'location',
         latitude: -12.064619,
         longitude: -77.037364,
-
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -435,11 +430,11 @@ export const getBusStopsData = (
         icon: 'location',
         latitude: -12.063628,
         longitude: -77.032318,
-
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
       {
         id: '3',
@@ -449,12 +444,13 @@ export const getBusStopsData = (
         estimatedTime: '',
         duration: '',
         icon: 'location',
-        latitude: -12.063990,
+        latitude: -12.06399,
         longitude: -77.024997,
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -471,6 +467,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -487,6 +484,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -503,6 +501,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -515,11 +514,11 @@ export const getBusStopsData = (
         icon: 'location',
         latitude: -12.082337,
         longitude: -76.997338,
-
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -532,11 +531,11 @@ export const getBusStopsData = (
         icon: 'location',
         latitude: -12.092801,
         longitude: -76.995811,
-
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -553,6 +552,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -570,6 +570,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
       {
         id: '6',
@@ -585,6 +586,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
       {
         id: '7',
@@ -594,12 +596,13 @@ export const getBusStopsData = (
         estimatedTime: '',
         duration: '',
         icon: 'location',
-        latitude: -12.172350,
+        latitude: -12.17235,
         longitude: -76.965037,
         isActive: false,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
     ];
   } else if (codruta === '6') {
@@ -618,6 +621,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
       {
         id: '2',
@@ -633,6 +637,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
       {
         id: '2.1',
@@ -648,6 +653,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -664,6 +670,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -680,6 +687,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -696,10 +704,9 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
-
-      
       {
         id: '2.9',
         name: 'CDI / HIGUERETA',
@@ -714,6 +721,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -730,6 +738,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -746,6 +755,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -762,6 +772,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -778,6 +789,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -794,6 +806,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -810,6 +823,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
       {
         id: '5',
@@ -825,6 +839,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -841,6 +856,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
 
       {
@@ -857,6 +873,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
+        radioGeocerca: 35,
       },
       {
         id: '6',
@@ -872,6 +889,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -888,6 +906,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
+        radioGeocerca: 35,
       },
     ];
   } else {

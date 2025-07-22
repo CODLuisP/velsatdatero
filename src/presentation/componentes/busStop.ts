@@ -15,4 +15,5 @@ export interface BusStop {
   isSkipped?: boolean;
   isIntermediate?: boolean;
   intermediateStartTime?: Date;
+  radioGeocerca: number;
 }
