@@ -1,17 +1,14 @@
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
-  DrawerContentScrollView,
-  DrawerItem,
+  DrawerContentScrollView
 } from '@react-navigation/drawer';
 
-import {Image, Linking, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ControlScreen} from '../screens/ControlScreen';
 import {RutaBusScreen} from '../screens/RutaBusScreen';
-import {MapaScreen} from '../screens/MapaScreen';
-import {Button} from 'react-native-paper';
 import {IonIcon} from '../components/shared/IonIcon';
-import {useEffect, useState, useMemo} from 'react';
+import {useEffect, useState} from 'react';
 import {globalStyles} from '../theme/styles';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import React from 'react';
@@ -148,7 +145,7 @@ const CurrentTime = React.memo(() => {
                 style={{marginLeft: 8}}
               />
               <IonIcon
-                name="ellular-outline"
+                name="cellular-outline"
                 size={20}
                 color="#fff"
                 style={{marginLeft: 8}}
@@ -227,33 +224,12 @@ export const SideMenuNavigator = () => {
           headerRight: () => <CurrentTime />,
         }}
       />
-      <Drawer.Screen
-        name="Mapa"
-        component={MapaScreen}
-        options={{
-          headerShown: true,
-          headerTitleStyle: {
-            marginLeft: -5,
-            color: '#ffffff',
-            fontSize: 20,
-          },
-          headerStyle: {
-            backgroundColor: '#113EB9',
-          },
-          headerLeft: () => null,
-          drawerType: 'slide',
-          unmountOnBlur: false,
-        }}
-      />
     </Drawer.Navigator>
   );
 };
 
 const CustomDrawerContent = React.memo((props: DrawerContentComponentProps) => {
   const {navigation} = props;
-
-  const pdfUrl =
-    'https://drive.google.com/file/d/1MnjCzv1_59SOsZPgo5HjALoPbESnFQsQ/view?usp=sharing';
 
   return (
     <DrawerContentScrollView
@@ -298,27 +274,6 @@ const CustomDrawerContent = React.memo((props: DrawerContentComponentProps) => {
           <Text style={globalStyles.version}>Versión 2.0</Text>
           <Text style={globalStyles.location}>Lima - Perú</Text>
           <Text style={globalStyles.copyright}>© 2025 VELSAT SAC</Text>
-        </View>
-
-        <View style={{padding: 5}}>
-          <Button
-            buttonColor="#FB7B0F"
-            mode="contained"
-            onPress={() => Linking.openURL(pdfUrl)}
-            style={{
-              borderRadius: 10,
-              padding: 2,
-              marginLeft: 10,
-              marginRight: 10,
-            }}>
-            <View style={{flexDirection: 'row'}}>
-              <Text
-                style={{marginRight: 10, color: '#FFF', fontWeight: 'bold'}}>
-                Políticas de Privacidad
-              </Text>
-              <IonIcon name="shield-half-outline" size={20} color="#FFF" />
-            </View>
-          </Button>
         </View>
       </View>
     </DrawerContentScrollView>
