@@ -313,7 +313,7 @@ export const getBusStopsData = (
         icon: 'location',
         latitude: -12.062379,
         longitude: -77.096021,
-        isActive: false,
+        isActive: true,
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,

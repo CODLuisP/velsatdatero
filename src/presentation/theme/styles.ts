@@ -402,26 +402,26 @@ export const globalStyles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
     marginBottom: 2,
-    color: '#FFF',
+    color: '#212529',
   },
 
   location: {
     fontSize: 11,
     fontWeight: 'bold',
     marginBottom: 2,
-    color: '#FFF',
+    color: '#212529',
   },
 
   copyright: {
     fontSize: 11,
     fontWeight: 'bold',
     marginBottom: 2,
-    color: '#FFF',
+    color: '#212529',
   },
 
   tituloSide: {
     fontSize: 18,
-    color: '#dee2e6',
+    color: '#212529',
     fontWeight: 'bold',
     alignSelf: 'center',
   },

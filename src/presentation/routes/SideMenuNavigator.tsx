@@ -233,13 +233,13 @@ const CustomDrawerContent = React.memo((props: DrawerContentComponentProps) => {
 
   return (
     <DrawerContentScrollView
-      contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
+      contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between',          backgroundColor: '#FFF',
+}}>
       <View
         style={{
-          marginTop: -5,
+         
           height: '100%',
           justifyContent: 'space-between',
-          backgroundColor: '#001233',
         }}>
         <View style={{marginTop: 20}}>
           <Text style={globalStyles.tituloSide}>BIENVENIDO A</Text>
