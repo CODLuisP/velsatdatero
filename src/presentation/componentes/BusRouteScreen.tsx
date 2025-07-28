@@ -37,23 +37,23 @@ const CustomNotification = ({
   const getBackgroundColor = () => {
     switch (type) {
       case 'success':
-        return '#4CAF50'; 
+        return '#4CAF50';
       case 'error':
-        return '#dc3545'; 
+        return '#dc3545';
       case 'info':
       default:
-        return '#00509d'; 
+        return '#00509d';
     }
   };
 
   const notificationStyles = StyleSheet.create({
     container: {
-      backgroundColor: getBackgroundColor(), 
+      backgroundColor: getBackgroundColor(),
       padding: 10,
       alignSelf: 'center',
       width: '91%',
       alignItems: 'center',
-      shadowColor: '#000', 
+      shadowColor: '#000',
       shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
@@ -67,7 +67,7 @@ const CustomNotification = ({
     },
     description: {
       textAlign: 'center',
-      color: '#fff', 
+      color: '#fff',
     },
   });
   return (
@@ -90,7 +90,7 @@ export const mostrarNotificacion = (
     Component: props => <CustomNotification {...props} type={type} />,
     title: titulo,
     description: descripcion,
-    duration: 3000, 
+    duration: 3000,
     onHidden: onHidden,
   });
 };
@@ -116,6 +116,7 @@ interface BusRouteScreenProps {
   deviceID: string;
   fecreg: string;
   codconductor: string;
+  scrollViewRef?: React.RefObject<ScrollView>;
 }
 
 // Nueva interfaz para datos en cola
@@ -436,7 +437,7 @@ const enviarDatosAPI = async (
         codruta,
       });
       return {
-        success: true, 
+        success: true,
         queued: true,
         message: 'Guardado en cola offline',
       };
@@ -482,7 +483,7 @@ const enviarDatosAPI = async (
         codruta,
       });
       return {
-        success: true, 
+        success: true,
         queued: true,
         message: `Error HTTP ${response.status}, guardado en cola offline`,
       };
@@ -501,7 +502,7 @@ const enviarDatosAPI = async (
       codruta,
     });
     return {
-      success: true, 
+      success: true,
       queued: true,
       message: 'Error de red, guardado en cola offline',
     };
@@ -640,6 +641,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   deviceID,
   codconductor,
   fecreg,
+  scrollViewRef,
 }) => {
   const arrivalTimes = generateArrivalTimes(fechaini, codruta);
   const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
@@ -1041,13 +1043,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     if (currentLatitude !== 0 && currentLongitude !== 0 && androidIdLocal) {
       detectAnyNearbyStop();
     }
-  }, [
-    currentLatitude,
-    currentLongitude,
-    androidIdLocal,
-    codasig,
-    androidID,
-  ]);
+  }, [currentLatitude, currentLongitude, androidIdLocal, codasig, androidID]);
 
   useEffect(() => {
     const initialStops = getBusStopsData(codruta, arrivalTimes);
@@ -1243,67 +1239,90 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     );
   };
 
+  // Autoscroll
+  useEffect(() => {
+    const activeStopIndex = busStops.findIndex(stop => stop.isActive);
+
+    if (activeStopIndex !== -1 && scrollViewRef?.current) {
+      const avgItemHeight = 60; // Altura promedio
+      const headerHeight = 60; // Altura del header de ruta
+      const visibleAreaHeight = 300; 
+
+      // Calcular posición para centrar el elemento activo
+      const elementPosition = headerHeight + activeStopIndex * avgItemHeight;
+      const centeredOffset = elementPosition - visibleAreaHeight / 5 + 30; // Posicionar en el primer tercio
+
+      // Asegurar que no haga scroll negativo
+      const finalOffset = Math.max(0, centeredOffset);
+
+      console.log(
+        `📍 Enfocando elemento ${activeStopIndex}: offset ${finalOffset}`,
+      );
+
+      scrollViewRef.current.scrollTo({
+        y: finalOffset,
+        animated: true,
+      });
+    }
+  }, [busStops.findIndex(stop => stop.isActive), scrollViewRef]);
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.routeInfoContainer}>
-          <Text style={styles.routeInfoText}>
-            {codruta === '5'
-              ? `RUTA W 1234 | LA PERLA - SAN JUAN (A) HS: ${fechaini}`
-              : codruta === '6'
-              ? `RUTA W 1234 | SAN JUAN - LA PERLA (B) HS: ${fechaini}`
-              : `Ruta ${codruta}`}
+      <View style={styles.routeInfoContainer}>
+        <Text style={styles.routeInfoText}>
+          {codruta === '5'
+            ? `RUTA W 1234 | LA PERLA - SAN JUAN (A) HS: ${fechaini}`
+            : codruta === '6'
+            ? `RUTA W 1234 | SAN JUAN - LA PERLA (B) HS: ${fechaini}`
+            : `Ruta ${codruta}`}
+        </Text>
+        {queueStats.total > 0 && (
+          <Text style={styles.queueInfoText}>
+            📤 Cola offline: {queueStats.pending} pendientes
           </Text>
-          {queueStats.total > 0 && (
-            <Text style={styles.queueInfoText}>
-              📤 Cola offline: {queueStats.pending} pendientes
-            </Text>
+        )}
+      </View>
+      {busStops.map((stop, index) => (
+        <View key={stop.id}>
+          <BusStopItem
+            id={stop.id}
+            name={stop.name}
+            description={stop.description}
+            arrivalTime={stop.arrivalTime}
+            estimatedTime={stop.estimatedTime}
+            actualTime={stop.actualTime}
+            duration={stop.duration}
+            icon={stop.icon}
+            isActive={stop.isActive}
+            isCompleted={stop.isCompleted}
+            isTerminal={stop.isTerminal}
+            isIntermediate={stop.isIntermediate}
+            latitude={stop.latitude}
+            longitude={stop.longitude}
+            currentLatitude={currentLatitude}
+            currentLongitude={currentLongitude}
+            radioGeocerca={stop.radioGeocerca}
+            onStopCompleted={handleStopCompleted}
+          />
+          {index < busStops.length - 1 && (
+            <View
+              style={[
+                styles.connector,
+                stop.isCompleted && styles.completedConnector,
+                stop.isSkipped && styles.skippedConnector,
+              ]}
+            />
           )}
         </View>
-        {busStops.map((stop, index) => (
-          <View key={stop.id}>
-            <BusStopItem
-              id={stop.id}
-              name={stop.name}
-              description={stop.description}
-              arrivalTime={stop.arrivalTime}
-              estimatedTime={stop.estimatedTime}
-              actualTime={stop.actualTime}
-              duration={stop.duration}
-              icon={stop.icon}
-              isActive={stop.isActive}
-              isCompleted={stop.isCompleted}
-              isTerminal={stop.isTerminal}
-              isIntermediate={stop.isIntermediate}
-              latitude={stop.latitude}
-              longitude={stop.longitude}
-              currentLatitude={currentLatitude}
-              currentLongitude={currentLongitude}
-              radioGeocerca={stop.radioGeocerca}
-              onStopCompleted={handleStopCompleted}
-            />
-            {index < busStops.length - 1 && (
-              <View
-                style={[
-                  styles.connector,
-                  stop.isCompleted && styles.completedConnector,
-                  stop.isSkipped && styles.skippedConnector,
-                ]}
-              />
-            )}
-          </View>
-        ))}
-        <View style={styles.endRouteContainer}>
-          <TouchableOpacity
-            style={styles.endRouteButton}
-            onPress={handleTerminarRuta}
-            activeOpacity={0.8}>
-            <Text style={styles.endRouteButtonText}>Terminar Ruta</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      ))}
+      <View style={styles.endRouteContainer}>
+        <TouchableOpacity
+          style={styles.endRouteButton}
+          onPress={handleTerminarRuta}
+          activeOpacity={0.8}>
+          <Text style={styles.endRouteButtonText}>Terminar Ruta</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

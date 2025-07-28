@@ -6,7 +6,10 @@ import {useRoute} from '@react-navigation/native';
 import {formatPlaca} from '../utils/ObtenerNombre';
 import {processRightData} from '../utils/CalcularDiffs';
 import {IonIcon} from '../components/shared/IonIcon';
-import {calcularDistancias, calcularDistanciasVuelta} from '../utils/CalculoDistancia';
+import {
+  calcularDistancias,
+  calcularDistanciasVuelta,
+} from '../utils/CalculoDistancia';
 import App from '../componentes/Rastredor';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -94,9 +97,7 @@ export const RutaBusScreen = () => {
 
   return (
     <View style={globalStyles.containerRuta}>
-      <ScrollView
-        style={globalStyles.containerLeftRuta}
-        contentContainerStyle={{paddingBottom: 0}}>
+      <View style={globalStyles.containerLeftRuta}>
         <App
           codruta={codruta}
           logurb={logurb}
@@ -107,7 +108,7 @@ export const RutaBusScreen = () => {
           codconductor={codconductor}
           fecreg={fecreg}
         />
-      </ScrollView>
+      </View>
 
       <View style={globalStyles.containerRightRuta}>
         {vehicleDistances.length === 0 ? (
@@ -249,7 +250,7 @@ export const RutaBusScreen = () => {
             })()}
           </ScrollView>
         )}
-      </View>      
+      </View>
     </View>
   );
 };

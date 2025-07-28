@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,7 @@ import {
 import Geolocation from '@react-native-community/geolocation';
 import {PermissionsAndroid, Platform} from 'react-native';
 import BusRouteScreen from './BusRouteScreen';
-import {useAppContext} from '../../context/VelocidadContext';
-import { IonIcon } from '../components/shared/IonIcon';
+import {IonIcon} from '../components/shared/IonIcon';
 
 interface LocationData {
   latitude: number;
@@ -58,7 +57,7 @@ const App: React.FC<RastreadorType> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
-
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const requestLocationPermission = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -192,7 +191,6 @@ const App: React.FC<RastreadorType> = ({
     }
   };
 
-
   useEffect(() => {
     getInitialLocation();
 
@@ -203,14 +201,11 @@ const App: React.FC<RastreadorType> = ({
     };
   }, []);
 
-
-
   const renderLocationContent = () => {
     if (!location) return null;
 
     return (
       <>
-
         <View style={styles.geocercasContainer}>
           <BusRouteScreen
             key={codruta}
@@ -224,6 +219,7 @@ const App: React.FC<RastreadorType> = ({
             deviceID={deviceID}
             codconductor={codconductor}
             fecreg={fecreg}
+            scrollViewRef={scrollViewRef} // ← Prop Autoscroll
           />
 
           {/* <Text>{codconductor}</Text>
@@ -244,12 +240,15 @@ const App: React.FC<RastreadorType> = ({
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#2196F3" />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollViewRef} //Autoscroll
+        style={styles.content}
+        showsVerticalScrollIndicator={false}>
         {loading && (
           <View style={styles.loadingContainer}>
             <View style={styles.locationIconContainer}>
               <View style={styles.locationIconCircle}>
-                  <IonIcon name="location" size={32} color="#ff6b35" />
+                <IonIcon name="location" size={32} color="#ff6b35" />
               </View>
             </View>
 
@@ -309,10 +308,10 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 400, 
+    minHeight: 400,
     paddingVertical: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#f8f9ff', 
+    backgroundColor: '#f8f9ff',
     marginHorizontal: -5,
     marginTop: 0,
   },
@@ -343,14 +342,14 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 20, 
-    color: '#1a659e', 
+    fontSize: 20,
+    color: '#1a659e',
     fontWeight: 'bold',
     textAlign: 'center',
   },
   loadingSubtext: {
     marginTop: 8,
-    fontSize: 16, 
+    fontSize: 16,
     color: '#666',
     textAlign: 'center',
     lineHeight: 22,
@@ -391,7 +390,7 @@ const styles = StyleSheet.create({
     color: '#2e7d32',
     fontWeight: '600',
   },
-  
+
   errorContainer: {
     backgroundColor: '#ffebee',
     padding: 15,
@@ -411,7 +410,6 @@ const styles = StyleSheet.create({
   geocercasContainer: {
     flex: 1,
   },
-
 });
 
 export default App;
