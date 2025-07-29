@@ -398,11 +398,7 @@ export const ControlScreen = () => {
       console.log('[handleNavigation] Error: Placa vacía.');
       return;
     }
-    if (!isRutaActive) {
-      Alert.alert('Aviso', 'Unidad sin despacho activo');
-      console.log('[handleNavigation] Aviso: Unidad sin despacho activo.');
-      return;
-    }
+ 
     setError('');
     setLoading(true);
     try {
@@ -411,7 +407,6 @@ export const ControlScreen = () => {
       const placaUrl = `https://villa.velsat.pe:8443/api/Datero/urbano/${textPlaca}`;
       const response = await fetch(placaUrl);
       if (response.status === 204) {
-        Alert.alert('Aviso', 'Unidad sin despacho');
         setLoading(false);
         return;
       }
@@ -452,7 +447,6 @@ export const ControlScreen = () => {
         await AsyncStorage.setItem('placa', textPlaca);
         console.log('[handleNavigation] Navegación exitosa a RUTA BUS.');
       } else {
-        Alert.alert('Aviso', 'Unidad sin despacho');
         console.log("[handleNavigation] Aviso: isruta no es '1'.");
       }
     } catch (error) {
