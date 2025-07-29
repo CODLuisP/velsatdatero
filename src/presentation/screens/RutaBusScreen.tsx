@@ -117,7 +117,7 @@ export const RutaBusScreen = () => {
               flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: '#f8f9fa',
+              backgroundColor: '#fff',
               padding: 0,
             }}>
             <View

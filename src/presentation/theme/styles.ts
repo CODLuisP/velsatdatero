@@ -75,7 +75,7 @@ export const globalStyles = StyleSheet.create({
   },
 
   containerTimes: {
-    backgroundColor: '#93c5fd',
+    backgroundColor: '#003f88',
     marginVertical: 1.5,
     flexDirection: 'row',
     alignItems: 'center',
@@ -85,7 +85,7 @@ export const globalStyles = StyleSheet.create({
 
   valueTimes: {
     fontWeight: 'bold',
-    color: '#003566',
+    color: '#fff',
     paddingVertical: 5,
   },
 
@@ -421,7 +421,7 @@ export const globalStyles = StyleSheet.create({
 
   tituloSide: {
     fontSize: 18,
-    color: '#212529',
+    color: '#003566',
     fontWeight: 'bold',
     alignSelf: 'center',
   },

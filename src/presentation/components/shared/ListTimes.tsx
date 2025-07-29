@@ -30,18 +30,7 @@ export const ListTimes = ({value, geoact, diff, isCurrent, onPress}: Props) => {
 
       {!isCurrent && <Text style={globalStyles.valueTimesDiff}>{diff}</Text>}
 
-      {!isCurrent && (
-        <View
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: 999, 
-            padding: 6,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <IonIcon name="location" size={24} color="#003566" />
-        </View>
-      )}
+ 
     </Pressable>
   );
 };
