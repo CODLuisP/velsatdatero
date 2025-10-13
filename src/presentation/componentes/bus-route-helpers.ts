@@ -300,7 +300,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
 
       {
@@ -317,7 +317,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
       {
         id: '1.3',
@@ -333,7 +333,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
 
       {
@@ -349,8 +349,8 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
-        radioGeocerca: 2,
+        isIntermediate: false,
+        radioGeocerca: 35,
       },
 
       {
@@ -367,7 +367,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
 
       {
@@ -384,7 +384,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
 
       {
@@ -401,7 +401,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: false,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
       {
         id: '2.3',
@@ -417,7 +417,7 @@ export const getBusStopsData = (
         isCompleted: false,
         isSkipped: false,
         isIntermediate: true,
-        radioGeocerca: 2,
+        radioGeocerca: 35,
       },
 
       {
@@ -466,7 +466,7 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
+        isIntermediate: false,
         radioGeocerca: 35,
       },
 
@@ -543,7 +543,6 @@ export const getBusStopsData = (
         name: 'PUNTO INTERMEDIO 1',
         description: 'Punto de control',
         arrivalTime: '',
-
         estimatedTime: '',
         duration: '',
         icon: 'location',
@@ -569,7 +568,7 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
+        isIntermediate: false,
         radioGeocerca: 35,
       },
 
@@ -586,7 +585,7 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
+        isIntermediate: false,
         radioGeocerca: 35,
       },
 
@@ -603,7 +602,7 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
+        isIntermediate: false,
         radioGeocerca: 35,
       },
 
@@ -620,7 +619,7 @@ export const getBusStopsData = (
         isActive: false,
         isCompleted: false,
         isSkipped: false,
-        isIntermediate: true,
+        isIntermediate: false,
         radioGeocerca: 35,
       },
     ];
