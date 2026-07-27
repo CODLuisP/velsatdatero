@@ -5,17 +5,17 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Text,
   Alert,
   TouchableOpacity,
   Button,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import BusStopItem from './BusStopItem';
 import type {DrawerNavigationProp} from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
-import RNRestart from 'react-native-restart';
+import {restart} from '../../native/AppRestart';
 import {useAppContext} from '../../context/VelocidadContext';
 import moment from 'moment-timezone';
 import NetInfo from '@react-native-community/netinfo';
@@ -840,7 +840,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
           'Ruta Terminada',
           'Su ruta se ha terminado exitosamente.',
           'success',
-          () => RNRestart.Restart(),
+          () => restart(),
         );
       } else {
         console.error(
@@ -1210,7 +1210,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
                   'Ruta Terminada',
                   'Su ruta se ha terminado exitosamente.',
                   'success',
-                  () => RNRestart.Restart(),
+                  () => restart(),
                 );
               } else {
                 console.error(

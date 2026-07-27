@@ -1,11 +1,11 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
-import RNRestart from 'react-native-restart';
+import {restart} from '../../../native/AppRestart';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const RestartButton = () => {
   const handleRestart = () => {
-    RNRestart.Restart();
+    restart();
   };
 
   return (
