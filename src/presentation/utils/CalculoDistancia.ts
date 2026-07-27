@@ -35,6 +35,25 @@ const geocercaThree = turf.polygon([[
   [-77.080662, -12.059805], 
 ]]);
 
+const checkGeocercas = (vehicles: Vehicle[]) => {
+  return vehicles.map(vehicle => {
+    const vehiclePoint = turf.point([vehicle.lastValidLongitude, vehicle.lastValidLatitude]);
+
+    const isInsideGeocercaOne = turf.booleanPointInPolygon(vehiclePoint, geocercaOne);
+
+    const isInsideGeocercaTwo = turf.booleanPointInPolygon(vehiclePoint, geocercaTwo);
+
+    const isInsideGeocercaThree = turf.booleanPointInPolygon(vehiclePoint, geocercaThree); // ← NUEVA
+
+    return {
+      deviceID: vehicle.deviceID,
+      isInsideGeocercaOne,
+      isInsideGeocercaTwo,
+      isInsideGeocercaThree
+    };
+  });
+};
+
 export const verificarVehiculosEnGeocerca = async (rutaId: number) => {
   try {
     const response = await fetch(`https://villa.velsat.pe:8443/api/Datero/ruta/${rutaId}`
@@ -45,25 +64,7 @@ export const verificarVehiculosEnGeocerca = async (rutaId: number) => {
 
     const vehicles: Vehicle[] = await response.json();
 
-    const resultados = vehicles.map(vehicle => {
-      const vehiclePoint = turf.point([vehicle.lastValidLongitude, vehicle.lastValidLatitude]);
-
-
-      const isInsideGeocercaOne = turf.booleanPointInPolygon(vehiclePoint, geocercaOne);
-
-      const isInsideGeocercaTwo = turf.booleanPointInPolygon(vehiclePoint, geocercaTwo);
-
-      const isInsideGeocercaThree = turf.booleanPointInPolygon(vehiclePoint, geocercaThree); // ← NUEVA
-
-      return {
-        deviceID: vehicle.deviceID,
-        isInsideGeocercaOne, 
-        isInsideGeocercaTwo,  
-        isInsideGeocercaThree    
-      };
-    });
-
-    return resultados; 
+    return checkGeocercas(vehicles);
   } catch (error) {
     console.error('Error al verificar vehículos en la geocerca:', error);
     return [];
@@ -79,15 +80,13 @@ export const calcularDistancias = async (rutaId: number) => {
   const fixedPoint = { latitude: -12.182918, longitude: -76.955801 };
 
   try {
-   
-    const geofenceResults = await verificarVehiculosEnGeocerca(rutaId);
-
     const response = await fetch(`https://villa.velsat.pe:8443/api/Datero/ruta/${rutaId}`);
     if (!response.ok) {
       throw new Error('Error al obtener datos de la API');
     }
 
     const vehicles: Vehicle[] = await response.json();
+    const geofenceResults = checkGeocercas(vehicles);
 
     const distances = vehicles.map((vehicle) => {
       const vehicleLocation = {
