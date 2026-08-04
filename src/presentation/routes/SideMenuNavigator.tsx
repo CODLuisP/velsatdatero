@@ -123,38 +123,9 @@ const CurrentTime = React.memo(() => {
           }}>
           <Text style={globalStyles.titleModo}>{modoVisualizacion}</Text>
 
-          {modoVisualizacion === 'Modo Visualización' ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <IonIcon name="cellular-outline" size={25} color="#fff" />
-              <View style={{marginLeft: 8}}>
-                <BatteryIndicator level={batteryLevel} />
-              </View>
-                 <IonIcon
-                name="earth-outline"
-                size={20}
-                color="#fff"
-                style={{marginLeft: 8}}
-              />
-            </View>
-          ) : (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <IonIcon
-                name="earth-outline"
-                size={20}
-                color="#fff"
-                style={{marginLeft: 8}}
-              />
-              <IonIcon
-                name="cellular-outline"
-                size={20}
-                color="#fff"
-                style={{marginLeft: 8}}
-              />
-              <View style={{marginLeft: 8}}>
-                <BatteryIndicator level={batteryLevel} />
-              </View>
-            </View>
-          )}
+          <View style={{marginLeft: 8}}>
+            <BatteryIndicator level={batteryLevel} />
+          </View>
         </View>
       </View>
 
@@ -203,7 +174,7 @@ export const SideMenuNavigator = () => {
         options={{
           headerShown: true,
           headerTitleStyle: {
-            marginLeft: -10,
+            marginLeft: 10,
             color: '#ffffff',
             fontSize: 22,
           },
@@ -211,7 +182,6 @@ export const SideMenuNavigator = () => {
             backgroundColor: '#113EB9',
           },
           drawerType: 'slide',
-          unmountOnBlur: false,
           headerLeft: () => (
             <IonIcon
               name="menu"

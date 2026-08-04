@@ -334,7 +334,7 @@ export const ControlScreen = () => {
 
   const calculateTimeDifference = useCallback(
     (fechaini: string | null): number => {
-      // fechaini can be null
+
       if (
         !fechaini ||
         typeof fechaini !== 'string' ||
@@ -457,6 +457,54 @@ export const ControlScreen = () => {
     }
   }, [textPlaca, isRutaActive, navigation]); 
 
+  const checkPlacaStatus = useCallback(
+    async (placaToCheck: string) => {
+      const cleanPlaca = placaToCheck.trim();
+      if (!cleanPlaca) {
+        setIsSignalRDataLoaded(true);
+        setIsRutaActive(false);
+        return;
+      }
+
+      try {
+        console.log(`[checkPlacaStatus] Verificando estado inicial para placa: ${cleanPlaca}`);
+        const placaUrl = `https://villa.velsat.pe:8443/api/Datero/urbano/${cleanPlaca}`;
+        const response = await fetch(placaUrl);
+
+        if (response.ok && response.status !== 204) {
+          const data = await response.json();
+          console.log('[checkPlacaStatus] Resultado API:', data);
+          const hasRoute = data?.isruta === '1';
+          setIsRutaActive(hasRoute);
+          setSignalRData({
+            deviceID: cleanPlaca,
+            fechaini: data?.fechaini ?? null,
+            isruta: data?.isruta ?? '0',
+          });
+
+          if (hasRoute) {
+            const timeDiff = calculateTimeDifference(data?.fechaini);
+            setTimerDuration(timeDiff);
+            setShowTimer(true);
+          } else {
+            setShowTimer(false);
+          }
+        } else {
+  
+          setIsRutaActive(false);
+          setSignalRData(null);
+          setShowTimer(false);
+        }
+      } catch (err) {
+        console.error('[checkPlacaStatus] Error verificando estado de placa:', err);
+        setIsRutaActive(false);
+      } finally {
+        setIsSignalRDataLoaded(true);
+      }
+    },
+    [calculateTimeDifference],
+  );
+
   // Inicializar SignalR
   useEffect(() => {
     const initializeSignalR = async () => {
@@ -473,20 +521,19 @@ export const ControlScreen = () => {
           console.log('Datos recibidos de SignalR:', data);
           setSignalRData(data); 
           setIsRutaActive(data.isruta === '1');
-
-          const timeDiffSeconds = calculateTimeDifference(data.fechaini);
-          console.log(
-            `[SignalR Handler] Diferencia de tiempo calculada (segundos): ${timeDiffSeconds}`,
-          );
-
-          setShowTimer(true);
-          setTimerDuration(timeDiffSeconds);
-          setSignalRDataUpdateCount(prev => prev + 1); 
           setIsSignalRDataLoaded(true); 
 
-          console.log(
-            '[SignalR Handler] Cronómetro configurado. La navegación se activará al expirar el cronómetro.',
-          );
+          if (data.isruta === '1') {
+            const timeDiffSeconds = calculateTimeDifference(data.fechaini);
+            console.log(
+              `[SignalR Handler] Diferencia de tiempo calculada (segundos): ${timeDiffSeconds}`,
+            );
+            setShowTimer(true);
+            setTimerDuration(timeDiffSeconds);
+            setSignalRDataUpdateCount(prev => prev + 1); 
+          } else {
+            setShowTimer(false);
+          }
         });
 
         // Conectar
@@ -513,8 +560,15 @@ export const ControlScreen = () => {
     };
   }, [calculateTimeDifference]);
 
-  // Unirse al grupo de SignalR cuando cambie la placa
+  // Unirse al grupo de SignalR cuando cambie la placa y verificar estado inicial
   useEffect(() => {
+    if (textPlaca.trim() !== '') {
+      checkPlacaStatus(textPlaca);
+    } else {
+      setIsSignalRDataLoaded(true);
+      setIsRutaActive(false);
+    }
+
     if (
       connection &&
       connection.state === HubConnectionState.Connected &&
@@ -527,7 +581,7 @@ export const ControlScreen = () => {
           console.error('Error uniéndose al grupo:', error),
         );
     }
-  }, [connection, textPlaca]);
+  }, [connection, textPlaca, checkPlacaStatus]);
 
   // Limpiar el flag de navegación al iniciar la app (para asegurar que la navegación automática funcione correctamente)
   useEffect(() => {
