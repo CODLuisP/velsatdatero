@@ -111,8 +111,9 @@ const CurrentTime = React.memo(() => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          padding: 12,
-          marginLeft: 10,
+          paddingVertical: 0,
+          paddingHorizontal: 5,
+          marginLeft: 5,
           justifyContent: 'center',
         }}>
         <View
@@ -133,15 +134,15 @@ const CurrentTime = React.memo(() => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          marginRight: 20,
+          marginRight: 10,
         }}>
         <IonIcon
           name="stopwatch-outline"
           color="#fff"
-          size={32}
-          style={{marginRight: 8}}
+          size={28}
+          style={{marginRight: 6}}
         />
-        <Text style={{color: '#ffffff', fontSize: 28}}>{currentTime}</Text>
+        <Text style={{color: '#ffffff', fontSize: 24, fontWeight: '600'}}>{currentTime}</Text>
       </View>
     </View>
   );
@@ -173,20 +174,22 @@ export const SideMenuNavigator = () => {
         component={RutaBusScreen}
         options={{
           headerShown: true,
+          headerStatusBarHeight: 0,
           headerTitleStyle: {
-            marginLeft: 10,
+            marginLeft: 5,
             color: '#ffffff',
-            fontSize: 22,
+            fontSize: 20,
           },
           headerStyle: {
             backgroundColor: '#113EB9',
+            height: 50,
           },
           drawerType: 'slide',
           headerLeft: () => (
             <IonIcon
               name="menu"
               color="#fff"
-              size={40}
+              size={32}
               style={{marginLeft: 10}}
               onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
             />

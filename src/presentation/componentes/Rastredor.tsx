@@ -57,7 +57,7 @@ const App: React.FC<RastreadorType> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
   const requestLocationPermission = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -238,7 +238,7 @@ const App: React.FC<RastreadorType> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2196F3" />
+      <StatusBar hidden={true} />
 
       <ScrollView
         ref={scrollViewRef} //Autoscroll
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingVertical: 5,
+    paddingVertical: 0,
   },
   loadingContainer: {
     alignItems: 'center',

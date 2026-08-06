@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { AppState, View } from 'react-native';
+import { AppState, View, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SideMenuNavigator } from './presentation/routes/SideMenuNavigator';
@@ -15,10 +15,12 @@ export const App = () => {
   useKeepAwake();
 
   useEffect(() => {
+    StatusBar.setHidden(true, 'none');
     SystemNavigationBar.immersive();
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
+        StatusBar.setHidden(true, 'none');
         SystemNavigationBar.immersive();
       }
     });
@@ -33,6 +35,7 @@ export const App = () => {
   
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar hidden={true} />
       <SafeAreaProvider>
         <NotifierWrapper>
           <AppProvider>

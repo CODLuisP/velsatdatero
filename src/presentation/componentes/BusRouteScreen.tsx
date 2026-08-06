@@ -116,7 +116,7 @@ interface BusRouteScreenProps {
   deviceID: string;
   fecreg: string;
   codconductor: string;
-  scrollViewRef?: React.RefObject<ScrollView>;
+  scrollViewRef?: React.RefObject<ScrollView | null> | React.RefObject<ScrollView>;
 }
 
 // Nueva interfaz para datos en cola
@@ -1246,14 +1246,15 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     if (activeStopIndex !== -1 && scrollViewRef?.current) {
       const avgItemHeight = 60; // Altura promedio
       const headerHeight = 60; // Altura del header de ruta
-      const visibleAreaHeight = 300; 
+      const visibleAreaHeight = 300;
 
-      // Calcular posición para centrar el elemento activo
-      const elementPosition = headerHeight + activeStopIndex * avgItemHeight;
-      const centeredOffset = elementPosition - visibleAreaHeight / 5 + 30; // Posicionar en el primer tercio
-
-      // Asegurar que no haga scroll negativo
-      const finalOffset = Math.max(0, centeredOffset);
+      // Si es el primer paradero (index 0), mantener la cabecera de ruta azul 100% visible (offset 0)
+      let finalOffset = 0;
+      if (activeStopIndex > 0) {
+        const elementPosition = headerHeight + activeStopIndex * avgItemHeight;
+        const centeredOffset = elementPosition - visibleAreaHeight / 5 + 30;
+        finalOffset = Math.max(0, centeredOffset);
+      }
 
       console.log(
         `📍 Enfocando elemento ${activeStopIndex}: offset ${finalOffset}`,
@@ -1267,7 +1268,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   }, [busStops.findIndex(stop => stop.isActive), scrollViewRef]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.routeInfoContainer}>
         <Text style={styles.routeInfoText}>
           {codruta === '5'
@@ -1323,7 +1324,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
           <Text style={styles.endRouteButtonText}>Terminar Ruta</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -1340,7 +1341,7 @@ const styles = StyleSheet.create({
   },
   routeInfoContainer: {
     backgroundColor: '#00509d',
-    marginBottom: 8,
+    marginBottom: 0,
     paddingVertical: 8,
     alignItems: 'center',
   },
