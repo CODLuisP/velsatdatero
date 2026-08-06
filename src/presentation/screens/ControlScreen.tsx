@@ -85,34 +85,26 @@ const ControlAlert: React.FC<ControlAlertProps> = ({
       hasTriggeredExpiredRef.current = false;
     }
 
-    if (showTimer) {
-      if (initialSeconds > 0) {
-        if (!hasTriggeredExpiredRef.current) {
-          intervalRef.current = setInterval(() => {
-            setTotalSeconds(prevSeconds => {
-              const newSeconds = prevSeconds - 1;
-              onTimeChange?.(newSeconds);
-              if (newSeconds <= 0) {
-                if (intervalRef.current) {
-                  clearInterval(intervalRef.current);
-                  intervalRef.current = null;
-                }
-                if (!hasTriggeredExpiredRef.current) {
-                  hasTriggeredExpiredRef.current = true;
-                  onTimeExpired?.();
-                }
-                return 0;
+    if (showTimer && initialSeconds > 0) {
+      if (!hasTriggeredExpiredRef.current) {
+        intervalRef.current = setInterval(() => {
+          setTotalSeconds(prevSeconds => {
+            const newSeconds = prevSeconds - 1;
+            onTimeChange?.(newSeconds);
+            if (newSeconds <= 0) {
+              if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
               }
-              return newSeconds;
-            });
-          }, 1000);
-        }
-      } else {
-        if (!hasTriggeredExpiredRef.current) {
-          hasTriggeredExpiredRef.current = true;
-          onTimeExpired?.();
-          onTimeChange?.(0);
-        }
+              if (!hasTriggeredExpiredRef.current) {
+                hasTriggeredExpiredRef.current = true;
+                onTimeExpired?.();
+              }
+              return 0;
+            }
+            return newSeconds;
+          });
+        }, 1000);
       }
     }
 
@@ -493,6 +485,7 @@ export const ControlScreen = () => {
             transport: HttpTransportType.WebSockets,
             skipNegotiation: true,
           })
+          .withAutomaticReconnect([0, 2000, 5000, 10000, 15000])
           .configureLogging(LogLevel.Warning)
           .build();
 
@@ -503,16 +496,29 @@ export const ControlScreen = () => {
           setIsSignalRDataLoaded(true);
 
           if (data.isruta === '1') {
-            const timeDiffSeconds = calculateTimeDifference(data.fechaini);
-            setTimerDuration(timeDiffSeconds);
-            setShowTimer(timeDiffSeconds > 0);
-            if (timeDiffSeconds <= 0) {
-              handleNavigation(data.deviceID || textPlaca);
+            const currentPlaca = textPlaca.trim();
+            if (currentPlaca !== '') {
+              checkPlacaStatus(currentPlaca);
+            } else {
+              const timeDiffSeconds = calculateTimeDifference(data.fechaini);
+              setTimerDuration(timeDiffSeconds);
+              setShowTimer(timeDiffSeconds > 0);
+              if (timeDiffSeconds <= 0) {
+                handleNavigation(data.deviceID || textPlaca);
+              }
             }
             setSignalRDataUpdateCount(prev => prev + 1);
           } else {
             setShowTimer(false);
             setTimerDuration(0);
+          }
+        });
+
+        newConnection.onreconnected(() => {
+          if (textPlaca.trim() !== '') {
+            newConnection
+              .invoke('UnirGrupo', textPlaca.trim())
+              .catch((err: any) => console.error('Error uniéndose al grupo:', err));
           }
         });
 
@@ -547,7 +553,7 @@ export const ControlScreen = () => {
         connectionRef.current = null;
       }
     };
-  }, [calculateTimeDifference]);
+  }, [calculateTimeDifference, checkPlacaStatus, textPlaca, handleNavigation]);
 
   // Unirse a grupo de SignalR al cambiar la placa
   useEffect(() => {
@@ -601,6 +607,20 @@ export const ControlScreen = () => {
       };
     }, [textPlaca, checkPlacaStatus]),
   );
+
+  // Polling automático cada 10 segundos para actualizar despacho en tiempo real sin reiniciar la app
+  useEffect(() => {
+    if (!isScreenActive) return;
+
+    const interval = setInterval(() => {
+      const cleanPlaca = textPlaca.trim();
+      if (cleanPlaca !== '') {
+        checkPlacaStatus(cleanPlaca);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [isScreenActive, textPlaca, checkPlacaStatus]);
 
   const fetchDeviceIDs = useCallback(async () => {
     try {

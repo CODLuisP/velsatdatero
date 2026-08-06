@@ -124,7 +124,6 @@ const App: React.FC = () => {
         }
       },
       error => {
-        console.log('Ubicación rápida falló, intentando con GPS...');
         startPreciseTracking();
       },
       {

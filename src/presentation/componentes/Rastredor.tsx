@@ -123,7 +123,6 @@ const App: React.FC<RastreadorType> = ({
         }
       },
       error => {
-        console.log('Ubicación rápida falló, intentando con GPS...');
         startPreciseTracking();
       },
       {
@@ -219,18 +218,8 @@ const App: React.FC<RastreadorType> = ({
             deviceID={deviceID}
             codconductor={codconductor}
             fecreg={fecreg}
-            scrollViewRef={scrollViewRef} // ← Prop Autoscroll
+            scrollViewRef={scrollViewRef}
           />
-
-          {/* <Text>{codconductor}</Text>
-          <Text>{fecreg}</Text>
-          {/* {logurb.map((item, index) => (
-            <View key={index} style={{marginBottom: 10}}>
-              <Text>{item.nom_control}</Text>
-              <Text>{item.volado}</Text>
-
-            </View>
-          ))} */}
         </View>
       </>
     );
@@ -246,22 +235,20 @@ const App: React.FC<RastreadorType> = ({
         showsVerticalScrollIndicator={false}>
         {loading && (
           <View style={styles.loadingContainer}>
-            <View style={styles.locationIconContainer}>
-              <View style={styles.locationIconCircle}>
-                <IonIcon name="location" size={32} color="#ff6b35" />
-              </View>
+            <View style={styles.locationIconCircle}>
+              <IonIcon name="location-sharp" size={38} color="#003f88" />
             </View>
 
             <ActivityIndicator
               size="large"
-              color="#00509d"
+              color="#003f88"
               style={styles.activityIndicator}
             />
 
             <Text style={styles.loadingText}>
               {location
-                ? '🛰️ Mejorando precisión...'
-                : '🌍 Obteniendo ubicación...'}
+                ? 'Mejorando precisión...'
+                : 'Obteniendo ubicación...'}
             </Text>
 
             <Text style={styles.loadingSubtext}>
@@ -279,7 +266,7 @@ const App: React.FC<RastreadorType> = ({
 
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>⚠️ {error}</Text>
+            <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
 
@@ -292,7 +279,7 @@ const App: React.FC<RastreadorType> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#edede9',
+    backgroundColor: '#ffffff',
   },
 
   title: {
@@ -308,86 +295,59 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 400,
-    paddingVertical: 60,
+    minHeight: 350,
+    paddingVertical: 50,
     paddingHorizontal: 20,
-    backgroundColor: '#f8f9ff',
-    marginHorizontal: -5,
+    backgroundColor: '#ffffff',
     marginTop: 0,
   },
-  locationIconContainer: {
-    marginBottom: 10,
-  },
   locationIconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#ffeedd',
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: '#e8eef5',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#fb8500',
-    elevation: 4,
-    shadowColor: '#2196F3',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  locationIcon: {
-    fontSize: 36,
+    borderWidth: 2,
+    borderColor: '#003f88',
+    marginBottom: 20,
   },
   activityIndicator: {
-    marginBottom: 10,
-    transform: [{scale: 1.2}],
+    marginBottom: 16,
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: 20,
-    color: '#1a659e',
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#003f88',
+    fontWeight: '700',
     textAlign: 'center',
   },
   loadingSubtext: {
-    marginTop: 8,
-    fontSize: 16,
-    color: '#666',
+    marginTop: 6,
+    fontSize: 14,
+    color: '#555555',
     textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 20,
-  },
-  progressContainer: {
-    width: '70%',
-    marginTop: 25,
     marginBottom: 20,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 3,
-    overflow: 'hidden',
-    position: 'relative',
   },
   gpsStatusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e8f5e8',
+    backgroundColor: '#e8eef5',
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#c8e6c9',
-    marginTop: 5,
+    borderColor: '#003f88',
   },
   gpsStatusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#4caf50',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#003f88',
     marginRight: 8,
   },
   gpsStatusText: {
-    fontSize: 14,
-    color: '#2e7d32',
+    fontSize: 13,
+    color: '#003f88',
     fontWeight: '600',
   },
 

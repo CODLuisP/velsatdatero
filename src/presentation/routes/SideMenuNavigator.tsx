@@ -29,7 +29,7 @@ const CurrentTime = React.memo(() => {
         const level = await DeviceInfo.getBatteryLevel();
         setBatteryLevel(Math.round(level * 100)); // Convertir a porcentaje
       } catch (error) {
-        console.log('Error getting battery level:', error);
+        // Silenciar error en producción
       }
     };
 
@@ -181,7 +181,7 @@ export const SideMenuNavigator = () => {
             fontSize: 20,
           },
           headerStyle: {
-            backgroundColor: '#113EB9',
+            backgroundColor: '#001845',
             height: 50,
           },
           drawerType: 'slide',

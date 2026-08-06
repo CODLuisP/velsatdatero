@@ -28,6 +28,8 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
     marginLeft: 5,
     marginBottom: 3,
+    marginTop: 0,
+    paddingTop: 0,
   },
 
   titleModoContainer: {
@@ -76,7 +78,8 @@ export const globalStyles = StyleSheet.create({
 
   containerTimes: {
     backgroundColor: '#003f88',
-    marginVertical: 1.5,
+    marginTop: 0,
+    marginBottom: 1.5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',

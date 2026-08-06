@@ -171,10 +171,6 @@ class OfflineQueue {
       maxRetries: this.maxRetries,
     };
     this.queue.push(queuedItem);
-    console.log(`📥 Dato agregado a la cola offline: ${busStop.name}`, {
-      queueSize: this.queue.length,
-      itemId: queuedItem.id,
-    });
     // Intentar procesar inmediatamente
     this.processQueue();
   }
@@ -188,13 +184,11 @@ class OfflineQueue {
     // Verificar conectividad
     const netInfo = await NetInfo.fetch();
     if (!netInfo.isConnected) {
-      console.log('🌐 Sin conexión a internet, esperando...');
       this.scheduleNextProcessing();
       return;
     }
 
     this.isProcessing = true;
-    console.log(`🔄 Procesando cola offline (${this.queue.length} elementos)`);
 
     const itemsToProcess = [...this.queue];
     for (let i = itemsToProcess.length - 1; i >= 0; i--) {
@@ -204,27 +198,16 @@ class OfflineQueue {
         if (result.success) {
           // Éxito: remover de la cola
           this.removeFromQueue(item.id);
-          console.log(
-            `✅ Dato enviado exitosamente desde cola: ${item.busStop.name}`,
-          );
         } else {
           // Error: incrementar contador de reintentos
           item.retryCount++;
           if (item.retryCount >= item.maxRetries) {
-            // Máximo de reintentos alcanzado
-            console.log(
-              `❌ Máximo de reintentos alcanzado para: ${item.busStop.name}`,
-            );
             this.removeFromQueue(item.id);
             // Opcional: notificar al usuario sobre el fallo permanente
             Alert.alert(
               'Error de Sincronización',
               `No se pudo sincronizar el registro de ${item.busStop.name} después de ${item.maxRetries} intentos.`,
               [{text: 'OK'}],
-            );
-          } else {
-            console.log(
-              `🔄 Reintento ${item.retryCount}/${item.maxRetries} para: ${item.busStop.name}`,
             );
           }
         }
@@ -323,11 +306,7 @@ class OfflineQueue {
 
   // Remover elemento de la cola
   private removeFromQueue(itemId: string): void {
-    const initialLength = this.queue.length;
     this.queue = this.queue.filter(item => item.id !== itemId);
-    if (this.queue.length < initialLength) {
-      console.log(`🗑️ Elemento removido de la cola: ${itemId}`);
-    }
   }
 
   // Programar siguiente procesamiento
@@ -362,7 +341,6 @@ class OfflineQueue {
       clearTimeout(this.processingTimer);
       this.processingTimer = null;
     }
-    console.log('🧹 Cola offline limpiada');
   }
 }
 
@@ -424,7 +402,6 @@ const enviarDatosAPI = async (
     // Verificar conectividad antes de intentar
     const netInfo = await NetInfo.fetch();
     if (!netInfo.isConnected) {
-      console.log(`🌐 Sin conexión, agregando a cola offline: ${busStop.name}`);
       const offlineQueue = OfflineQueue.getInstance();
       offlineQueue.addToQueue(busStop, {
         codasig,
@@ -461,9 +438,6 @@ const enviarDatosAPI = async (
 
     if (response.ok) {
       const result = await response.json();
-      console.log(
-        `✅ Datos enviados exitosamente en tiempo real: ${busStop.name}`,
-      );
       return {success: true, data: result};
     } else {
       console.error(
@@ -694,7 +668,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       if (state.isConnected) {
-        console.log('🌐 Conexión restaurada, procesando cola offline...');
         const offlineQueue = OfflineQueue.getInstance();
         offlineQueue.processQueue();
       }
@@ -728,16 +701,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               ? logItem.hora_llegada
               : undefined,
         };
-        console.log(`📊 Parada actualizada: ${logItem.nom_control}`, {
-          isCompleted: updatedStops[stopIndex].isCompleted,
-          isSkipped: updatedStops[stopIndex].isSkipped,
-          duration: updatedStops[stopIndex].duration,
-          isIntermediate: updatedStops[stopIndex].isIntermediate,
-        });
-      } else {
-        console.warn(
-          `No se encontró parada con nombre: ${logItem.nom_control}`,
-        );
       }
     });
 
@@ -776,11 +739,8 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               : stop.intermediateStartTime,
         };
       });
-    } else {
-      console.log('No hay paradas disponibles para activar');
     }
 
-    console.log('✨ Integración de logurb completada');
     return updatedStops;
   };
 
@@ -791,7 +751,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
 
   const autoTerminateRoute = useCallback(async () => {
     if (isTerminating) {
-      console.log('Already terminating, skipping autoTerminateRoute call.');
       return;
     }
     setIsTerminating(true);
@@ -816,9 +775,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
     const offlineQueue = OfflineQueue.getInstance();
     const currentQueueStats = offlineQueue.getQueueStats();
     if (currentQueueStats.total > 0) {
-      console.log(
-        `🚫 No se puede terminar la ruta automáticamente: ${currentQueueStats.pending} elementos pendientes en la cola offline.`,
-      );
       setIsTerminating(false);
       return;
     }
@@ -883,9 +839,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
       queueStats.total === 0 &&
       !isTerminating
     ) {
-      console.log(
-        '🎉 Última parada completada y cola vacía. Iniciando terminación automática...',
-      );
       autoTerminateRoute();
     }
   }, [busStops, queueStats.total, autoTerminateRoute, isTerminating]);
@@ -951,21 +904,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               fecreg,
               codruta,
             ).then(result => {
-              if (result.success) {
-                if (result.queued) {
-                  console.log(
-                    `📤 Dato guardado en cola offline: ${completedStop.name} - ${result.message}`,
-                  );
-                } else {
-                  console.log(
-                    `✅ Datos enviados exitosamente: ${completedStop.name}`,
-                  );
-                }
-              } else if (result.isUnauthorized) {
-                console.log(
-                  `🔒 Dispositivo en modo solo lectura: ${completedStop.name}`,
-                );
-              } else {
+              if (!result.success && !result.isUnauthorized) {
                 console.error(
                   `❌ Error enviando datos: ${completedStop.name}`,
                   result.error,
@@ -990,8 +929,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
                   ? new Date()
                   : undefined,
               };
-            } else {
-              console.log('🏁 No hay más paradas disponibles');
             }
           }
         }
@@ -1111,21 +1048,7 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
           fecreg,
           codruta,
         ).then(result => {
-          if (result.success) {
-            if (result.queued) {
-              console.log(
-                `📤 Parada completada manualmente guardada en cola offline: ${completedStop.name} - ${result.message}`,
-              );
-            } else {
-              console.log(
-                `✅ Datos enviados exitosamente para parada completada: ${completedStop.name}`,
-              );
-            }
-          } else if (result.isUnauthorized) {
-            console.log(
-              `🔒 Dispositivo en modo solo lectura - Parada completada: ${completedStop.name}`,
-            );
-          } else {
+          if (!result.success && !result.isUnauthorized) {
             console.error(
               `❌ Error enviando datos para parada completada: ${completedStop.name}`,
               result.error,
@@ -1150,10 +1073,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
               : undefined,
           };
         }
-
-        const logMessage = stop.isIntermediate
-          ? `Punto intermedio ${completedStop.name} registrado a las ${horaLlegada24}`
-          : `Parada ${completedStop.name} completada a las ${horaLlegada24} con duración: ${finalDuration}`;
       }
       return updatedStops;
     });
@@ -1161,7 +1080,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
 
   const handleTerminarRuta = async () => {
     if (isTerminating) {
-      console.log('Already terminating, skipping manual termination call.');
       return;
     }
     setIsTerminating(true);
@@ -1256,10 +1174,6 @@ const BusRouteScreen: React.FC<BusRouteScreenProps> = ({
         finalOffset = Math.max(0, centeredOffset);
       }
 
-      console.log(
-        `📍 Enfocando elemento ${activeStopIndex}: offset ${finalOffset}`,
-      );
-
       scrollViewRef.current.scrollTo({
         y: finalOffset,
         animated: true,
@@ -1340,7 +1254,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   routeInfoContainer: {
-    backgroundColor: '#00509d',
+    backgroundColor: '#003f88',
     marginBottom: 0,
     paddingVertical: 8,
     alignItems: 'center',
@@ -1359,7 +1273,7 @@ const styles = StyleSheet.create({
   connector: {
     width: 1,
     height: 8,
-    backgroundColor: '#00509d',
+    backgroundColor: '#003f88',
     marginLeft: 25,
     marginVertical: 0,
   },
